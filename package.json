@@ -1,6 +1,9 @@
 {
   "name": "widget-v2",
   "version": "0.1.0",
+  "homepage": "https://alexsinfarosa.github.io/T-widgetV2/",
+  "description": "NEWA temperature widget",
+  "author": "alexsinfarosa <as898@cornell.edu>",
   "private": true,
   "dependencies": {
     "antd": "^2.13.4",
