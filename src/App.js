@@ -1,16 +1,27 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
+
+// components
 import StationsMenu from "components/StationsMenu";
+import TempSlider from "components/TempSlider";
+import Header from "components/Header";
+
+// Styled components
+import { Page } from "styles";
 
 @inject("store")
 @observer
 class App extends Component {
   render() {
-    const { app } = this.props.store;
+    const { store } = this.props;
     return (
-      <div>
-        <StationsMenu store={app} />
-      </div>
+      <Page>
+        <StationsMenu />
+        <br />
+        <TempSlider />
+        <br />
+        <Header store={store} />
+      </Page>
     );
   }
 }

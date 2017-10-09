@@ -1,5 +1,35 @@
+html,
 body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body.hide-scroll {
+  max-height: 100vh;
+  height: 100vh;
+  position: fixed;
+}
+
+#root {
+  display: inline-flex;
+  flex-direction: column;
+  min-height: 100%;
+  min-width: 100%;
+  flex: 1;
+}
+
+*,
+*:after,
+*:before {
+  box-sizing: border-box;
 }
