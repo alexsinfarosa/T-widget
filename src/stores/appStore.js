@@ -3,6 +3,8 @@ import { stations } from "stations";
 import format from "date-fns/format";
 import addDays from "date-fns/add_days";
 import axios from "axios";
+import { quantile } from "simple-statistics";
+import spline from "cubic-spline";
 
 export default class appStore {
   constructor(fetch) {
@@ -32,7 +34,7 @@ export default class appStore {
   };
 
   // Observed data -------------------------------------------------------------------
-  @observable observedData;
+  @observable observedData = [];
   @action setObservedData = d => (this.observedData = d);
   @action
   loadObservedData = () => {
@@ -50,7 +52,42 @@ export default class appStore {
           interval: [1, 0, 0],
           duration: "std",
           season_start: seasonStart,
-          reduce: `cnt_ge_${this.temperature}`
+          reduce: `cnt_ge_75`
+        },
+        {
+          name: "maxt",
+          interval: [1, 0, 0],
+          duration: "std",
+          season_start: seasonStart,
+          reduce: `cnt_ge_80`
+        },
+        {
+          name: "maxt",
+          interval: [1, 0, 0],
+          duration: "std",
+          season_start: seasonStart,
+          reduce: `cnt_ge_85`
+        },
+        {
+          name: "maxt",
+          interval: [1, 0, 0],
+          duration: "std",
+          season_start: seasonStart,
+          reduce: `cnt_ge_90`
+        },
+        {
+          name: "maxt",
+          interval: [1, 0, 0],
+          duration: "std",
+          season_start: seasonStart,
+          reduce: `cnt_ge_95`
+        },
+        {
+          name: "maxt",
+          interval: [1, 0, 0],
+          duration: "std",
+          season_start: seasonStart,
+          reduce: `cnt_ge_100`
         }
       ]
     };
@@ -62,9 +99,9 @@ export default class appStore {
     return axios
       .post(`${this.protocol}//data.rcc-acis.org/StnData`, params)
       .then(res => {
-        console.log(res.data.data);
+        // console.log(res.data.data);
         this.setObservedData(res.data.data);
-        // this.setMean();
+        // this.setQuantiles(res.data.data);
         this.setIsLoading(false);
       })
       .catch(err => {
@@ -75,9 +112,32 @@ export default class appStore {
   @computed
   get daysAboveLastYear() {
     if (this.observedData) {
-      const values = this.observedData.map(year => Number(year[1]));
-      return values[values.length - 1];
+      const values = this.observedData.slice(-1)[0];
+      if (values) {
+        const x = [75, 80, 85, 90, 95, 100];
+        const y = values.slice(1, 7).map(n => Number(n));
+        const results = spline(this.temperature, x, y);
+        return Math.round(results);
+      }
     }
-    return 0;
   }
+
+  // @observable quantiles = [];
+
+  // @action
+  // setQuantiles = data => {
+  //   const temps = data.map(arr => arr.slice(1, 7).map(n => Number(n)));
+  //   for (var i = 0; i < temps[0].length; i++) {
+  //     const quantiles = quantile(temps.map(arr => arr[i]), [
+  //       0,
+  //       0.25,
+  //       0.5,
+  //       0.75,
+  //       1
+  //     ]);
+  //     const s = spline(87, [75, 80, 85, 90, 95, 100], [121, 88, 55, 16, 3, 0]);
+  //     console.log(Math.round(s));
+  //     this.quantiles.push(quantiles);
+  //   }
+  // };
 }

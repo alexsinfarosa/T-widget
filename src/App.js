@@ -13,14 +13,17 @@ import { Page } from "styles";
 @observer
 class App extends Component {
   render() {
-    const { store } = this.props;
+    const { daysAboveLastYear, temperature } = this.props.store.app;
     return (
       <Page>
         <StationsMenu />
         <br />
         <TempSlider />
         <br />
-        <Header store={store} />
+        <Header
+          temperature={temperature}
+          daysAboveLastYear={daysAboveLastYear}
+        />
       </Page>
     );
   }

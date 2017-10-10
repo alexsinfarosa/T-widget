@@ -8,7 +8,7 @@ import { Radio } from "antd";
 class StationsMenu extends Component {
   onChange = e => {
     this.props.store.app.setStation(e.target.value);
-    // this.props.store.app.loadObservedData();
+    this.props.store.app.loadObservedData();
     // this.props.store.app.loadProjection2040();
     // this.props.store.app.loadProjection2070();
   };
