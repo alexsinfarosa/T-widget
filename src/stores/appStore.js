@@ -38,12 +38,12 @@ export default class appStore {
   @action setObservedData = d => (this.observedData = d);
   @computed
   get daysAboveThresholdLastYear() {
-    return this.observedData.map(year => Number(year[1])).slice(-1);
+    return this.observedData.slice(-1).map(arr => Number(arr[1]))[0];
   }
   @action
   loadObservedData = () => {
     this.setIsLoading(true);
-    const seasonStart = format(addDays(new Date(), 1), "MM-DD");
+    // const seasonStart = format(addDays(new Date(), 1), "MM-DD");
 
     const params = {
       sid: this.station.sid,
@@ -55,20 +55,18 @@ export default class appStore {
           name: "maxt",
           interval: [1, 0, 0],
           duration: "std",
-          season_start: seasonStart,
+          season_start: "01-01",
           reduce: `cnt_ge_${this.temperature}`
         }
       ]
     };
-    // add: 'mcnt',
-    // maxmissing: 10
 
     // console.log(params);
 
     return axios
       .post(`${this.protocol}//data.rcc-acis.org/StnData`, params)
       .then(res => {
-        // console.log(res.data.data);
+        console.log(res.data.data);
         this.setObservedData(res.data.data);
         // this.setQuantiles(res.data.data);
         this.setIsLoading(false);
@@ -77,6 +75,52 @@ export default class appStore {
         console.log("Failed to load observed data ", err);
       });
   };
+
+  // Projection 2040-2069 ----------------------------------------------------------
+  // @observable projectedData2040 = [];
+  // @action
+  // setProjectedData2040 = d => {
+  //   // this.projectedData2040.clear();
+  //   this.projectedData2040 = d;
+  // };
+
+  // @action
+  // loadProjection2040() {
+  //   // this.setIsPLoading(true);
+  //   const params = {
+  //     bbox: [
+  //       this.station.lon,
+  //       this.station.lat + 0.1,
+  //       this.station.lon + 0.1,
+  //       this.station.lat
+  //     ],
+  //     // loc: `${this.station.lon}, ${this.station.lat}`,
+  //     sdate: [2040, Number(format(new Date(), "MM"))],
+  //     edate: [2069, Number(format(new Date(), "MM"))],
+  //     grid: "loca:wMean:rcp45",
+  //     elems: [
+  //       {
+  //         name: "maxt",
+  //         interval: [0, 1],
+  //         reduce: `mean`
+  //       }
+  //     ]
+  //   };
+
+  //   console.log(params);
+
+  //   return axios
+  //     .post(`${this.protocol}//grid2.rcc-acis.org/GridData`, params)
+  //     .then(res => {
+  //       console.log(res.data.data);
+  //       // this.setProjectedData2040(res.data.data);
+  //       // this.setp2040Mean();
+  //       // this.setIsPLoading(false);
+  //     })
+  //     .catch(err => {
+  //       console.log("Failed to load projection 2040-2069 ", err);
+  //     });
+  // }
 
   //  PROJECTIONS ONLY! --------------------------------------------------
   // @computed
@@ -96,23 +140,4 @@ export default class appStore {
   //     }
   //   }
   // }
-
-  // @observable quantiles = [];
-
-  // @action
-  // setQuantiles = data => {
-  //   const temps = data.map(arr => arr.slice(1, 7).map(n => Number(n)));
-  //   for (var i = 0; i < temps[0].length; i++) {
-  //     const quantiles = quantile(temps.map(arr => arr[i]), [
-  //       0,
-  //       0.25,
-  //       0.5,
-  //       0.75,
-  //       1
-  //     ]);
-  //     const s = spline(87, [75, 80, 85, 90, 95, 100], [121, 88, 55, 16, 3, 0]);
-  //     console.log(Math.round(s));
-  //     this.quantiles.push(quantiles);
-  //   }
-  // };
 }

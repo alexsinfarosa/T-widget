@@ -8,9 +8,10 @@ import { Spin } from "antd";
 import StationsMenu from "components/StationsMenu";
 import TempSlider from "components/TempSlider";
 import Header from "components/Header";
+import ObservedGauge from "components/ObservedGauge";
 
 // Styled components
-import { Page } from "styles";
+import { Page, Box } from "styles";
 
 @inject("store")
 @observer
@@ -28,10 +29,14 @@ class App extends Component {
         <TempSlider />
         <br />
         {!isLoading ? (
-          <Header
-            temperature={temperature}
-            daysAboveThresholdLastYear={daysAboveThresholdLastYear}
-          />
+          <Box>
+            <Header
+              temperature={temperature}
+              daysAboveThresholdLastYear={daysAboveThresholdLastYear}
+            />
+            <br />
+            <ObservedGauge />
+          </Box>
         ) : (
           <Spin />
         )}

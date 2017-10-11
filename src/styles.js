@@ -10,3 +10,12 @@ export const Page = styled.section`
   align-items: center;
   flex: 1;
 `;
+
+export const Box = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: 1px solid #d9d9d9;
+  border-radius: 5px;
+  padding: 1rem;
+`;
