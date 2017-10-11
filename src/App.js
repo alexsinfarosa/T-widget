@@ -9,6 +9,7 @@ import StationsMenu from "components/StationsMenu";
 import TempSlider from "components/TempSlider";
 import Header from "components/Header";
 import ObservedGauge from "components/ObservedGauge";
+import GaugeChart from 'components/GaugeChart'
 
 // Styled components
 import { Page, Box } from "styles";
@@ -19,9 +20,11 @@ class App extends Component {
   render() {
     const {
       isLoading,
-      daysAboveThresholdLastYear,
+      daysAboveThresholdThisYear,
       temperature
     } = this.props.store.app;
+    this.props.store.app.observedQuantilesNoDuplicates;
+    this.props.store.app.observedIndex;
     return (
       <Page>
         <StationsMenu />
@@ -32,7 +35,7 @@ class App extends Component {
           <Box>
             <Header
               temperature={temperature}
-              daysAboveThresholdLastYear={daysAboveThresholdLastYear}
+              daysAboveThresholdThisYear={daysAboveThresholdThisYear}
             />
             <br />
             <ObservedGauge />
@@ -40,6 +43,7 @@ class App extends Component {
         ) : (
           <Spin />
         )}
+        <GaugeChart />
       </Page>
     );
   }

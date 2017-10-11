@@ -3,8 +3,9 @@ import { stations } from "stations";
 import format from "date-fns/format";
 import addDays from "date-fns/add_days";
 import axios from "axios";
-import { quantile } from "simple-statistics";
 import spline from "cubic-spline";
+import { jStat } from "jStat";
+import { reevaluateQuantiles, index } from "utils";
 
 export default class appStore {
   constructor(fetch) {
@@ -37,9 +38,36 @@ export default class appStore {
   @observable observedData = [];
   @action setObservedData = d => (this.observedData = d);
   @computed
-  get daysAboveThresholdLastYear() {
+  get daysAboveThresholdThisYear() {
     return this.observedData.slice(-1).map(arr => Number(arr[1]))[0];
   }
+  @computed
+  get observedDays() {
+    return this.observedData.map(arr => Number(arr[1]));
+  }
+  @computed
+  get observedQuantiles() {
+    if (this.observedDays.length !== 0) {
+      const q = jStat.quantiles(this.observedDays, [0, 0.25, 0.5, 0.75, 1]);
+      return q.map(n => Math.round(n));
+    }
+  }
+  @computed
+  get observedQuantilesNoDuplicates() {
+    if (this.observedDays.length !== 0) {
+      return reevaluateQuantiles(this.observedQuantiles);
+    }
+  }
+  @computed
+  get observedIndex() {
+    if (this.observedDays.length !== 0) {
+      return index(
+        this.daysAboveThresholdThisYear,
+        this.observedQuantilesNoDuplicates
+      );
+    }
+  }
+
   @action
   loadObservedData = () => {
     this.setIsLoading(true);
@@ -66,7 +94,7 @@ export default class appStore {
     return axios
       .post(`${this.protocol}//data.rcc-acis.org/StnData`, params)
       .then(res => {
-        console.log(res.data.data);
+        // console.log(res.data.data);
         this.setObservedData(res.data.data);
         // this.setQuantiles(res.data.data);
         this.setIsLoading(false);
@@ -75,6 +103,20 @@ export default class appStore {
         console.log("Failed to load observed data ", err);
       });
   };
+
+  // @computed
+  // get observedTimeSeries() {
+  //   const values = this.observedData.map(year => Number(year[1]));
+  //   let results = [];
+  //   this.observedData.forEach(arr => {
+  //     results.push({
+  //       year: format(arr[0], "YYYY"),
+  //       "days above": Number(arr[1])
+  //     });
+  //   });
+
+  //   return results;
+  // }
 
   // Projection 2040-2069 ----------------------------------------------------------
   // @observable projectedData2040 = [];
