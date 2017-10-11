@@ -36,6 +36,10 @@ export default class appStore {
   // Observed data -------------------------------------------------------------------
   @observable observedData = [];
   @action setObservedData = d => (this.observedData = d);
+  @computed
+  get daysAboveThresholdLastYear() {
+    return this.observedData.map(year => Number(year[1])).slice(-1);
+  }
   @action
   loadObservedData = () => {
     this.setIsLoading(true);
@@ -52,42 +56,7 @@ export default class appStore {
           interval: [1, 0, 0],
           duration: "std",
           season_start: seasonStart,
-          reduce: `cnt_ge_75`
-        },
-        {
-          name: "maxt",
-          interval: [1, 0, 0],
-          duration: "std",
-          season_start: seasonStart,
-          reduce: `cnt_ge_80`
-        },
-        {
-          name: "maxt",
-          interval: [1, 0, 0],
-          duration: "std",
-          season_start: seasonStart,
-          reduce: `cnt_ge_85`
-        },
-        {
-          name: "maxt",
-          interval: [1, 0, 0],
-          duration: "std",
-          season_start: seasonStart,
-          reduce: `cnt_ge_90`
-        },
-        {
-          name: "maxt",
-          interval: [1, 0, 0],
-          duration: "std",
-          season_start: seasonStart,
-          reduce: `cnt_ge_95`
-        },
-        {
-          name: "maxt",
-          interval: [1, 0, 0],
-          duration: "std",
-          season_start: seasonStart,
-          reduce: `cnt_ge_100`
+          reduce: `cnt_ge_${this.temperature}`
         }
       ]
     };
@@ -109,18 +78,24 @@ export default class appStore {
       });
   };
 
-  @computed
-  get daysAboveLastYear() {
-    if (this.observedData) {
-      const values = this.observedData.slice(-1)[0];
-      if (values) {
-        const x = [75, 80, 85, 90, 95, 100];
-        const y = values.slice(1, 7).map(n => Number(n));
-        const results = spline(this.temperature, x, y);
-        return Math.round(results);
-      }
-    }
-  }
+  //  PROJECTIONS ONLY! --------------------------------------------------
+  // @computed
+  // get daysAboveLastYear() {
+  //   if (this.observedData) {
+  //     const values = this.observedData.slice(-1)[0];
+  //     if (values) {
+  //       const x = [75, 80, 85, 90, 95, 100];
+  //       console.log(x);
+  //       const y = values.slice(1, 7).map(n => Number(n));
+  //       console.log(y);
+  //       const results = spline(this.temperature, x, y);
+  //       console.log(
+  //         `temp: ${this.temperature}, days above: ${Math.round(results)}`
+  //       );
+  //       return Math.round(results);
+  //     }
+  //   }
+  // }
 
   // @observable quantiles = [];
 

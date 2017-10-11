@@ -9,7 +9,7 @@ class TempSlider extends Component {
   onChange = e => {
     // const { selectedProjection } = this.props.store.app;
     this.props.store.app.setTemperature(e);
-    // this.props.store.app.loadObservedData();
+    this.props.store.app.loadObservedData();
     // if (selectedProjection === "projection2040") {
     //   this.props.store.app.loadProjection2040();
     // }
