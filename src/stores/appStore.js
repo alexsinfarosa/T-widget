@@ -1,9 +1,9 @@
 import { observable, action, computed } from "mobx";
 import { stations } from "stations";
 import format from "date-fns/format";
-import addDays from "date-fns/add_days";
+// import addDays from "date-fns/add_days";
 import axios from "axios";
-import spline from "cubic-spline";
+// import spline from "cubic-spline";
 import { jStat } from "jStat";
 import { reevaluateQuantiles, index } from "utils";
 
@@ -44,6 +44,13 @@ export default class appStore {
   @computed
   get observedDays() {
     return this.observedData.map(arr => Number(arr[1]));
+  }
+
+  @computed
+  get observedMinMax() {
+    const values = this.observedData.map(arr => Number(arr[1]));
+    console.log(values);
+    return [Math.min(...values), Math.max(...values)];
   }
   @computed
   get observedQuantiles() {

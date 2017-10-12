@@ -7,43 +7,24 @@ import { Spin } from "antd";
 // components
 import StationsMenu from "components/StationsMenu";
 import TempSlider from "components/TempSlider";
-import Header from "components/Header";
 import ObservedGauge from "components/ObservedGauge";
-import GaugeChart from 'components/GaugeChart'
+import OldGauge from "components/OldGauge";
 
 // Styled components
-import { Page, Box } from "styles";
+import { Page } from "styles";
 
 @inject("store")
 @observer
 class App extends Component {
   render() {
-    const {
-      isLoading,
-      daysAboveThresholdThisYear,
-      temperature
-    } = this.props.store.app;
-    this.props.store.app.observedQuantilesNoDuplicates;
-    this.props.store.app.observedIndex;
+    const { isLoading } = this.props.store.app;
     return (
       <Page>
         <StationsMenu />
         <br />
         <TempSlider />
         <br />
-        {!isLoading ? (
-          <Box>
-            <Header
-              temperature={temperature}
-              daysAboveThresholdThisYear={daysAboveThresholdThisYear}
-            />
-            <br />
-            <ObservedGauge />
-          </Box>
-        ) : (
-          <Spin />
-        )}
-        <GaugeChart />
+        {!isLoading ? <ObservedGauge /> : <Spin />}
       </Page>
     );
   }
