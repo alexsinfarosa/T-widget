@@ -49,7 +49,6 @@ export default class appStore {
   @computed
   get observedMinMax() {
     const values = this.observedData.map(arr => Number(arr[1]));
-    console.log(values);
     return [Math.min(...values), Math.max(...values)];
   }
   @computed
@@ -64,6 +63,15 @@ export default class appStore {
     if (this.observedDays.length !== 0) {
       return reevaluateQuantiles(this.observedQuantiles);
     }
+  }
+  @computed
+  get arcPercentages() {
+    const tot = this.observedQuantilesNoDuplicates.reduce((a, b) => a + b, 0);
+    const perc = this.observedQuantilesNoDuplicates.map(
+      q => (q !== 0 ? q / tot * 80 : 0)
+    );
+    // console.log(perc, perc.reduce((a, b) => a + b, 0));
+    return perc;
   }
   @computed
   get observedIndex() {

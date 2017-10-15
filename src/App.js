@@ -8,7 +8,6 @@ import { Spin } from "antd";
 import StationsMenu from "components/StationsMenu";
 import TempSlider from "components/TempSlider";
 import ObservedGauge from "components/ObservedGauge";
-import OldGauge from "components/OldGauge";
 
 // Styled components
 import { Page } from "styles";

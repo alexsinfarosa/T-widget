@@ -8,14 +8,6 @@ import * as d3 from "d3";
 // styled components
 import { Box } from "styles";
 
-const browsers = [
-  { label: "Slightly Above", usage: "20" },
-  { label: "Above", usage: "20" },
-  { label: "New Record", usage: "20" },
-  { label: "Below", usage: "20" },
-  { label: "Slightly Below", usage: "20" }
-];
-
 function Label({ x, y, children }) {
   return (
     <text fill="white" textAnchor="middle" x={x} y={y} dy=".33em" fontSize={9}>
@@ -27,15 +19,6 @@ function Label({ x, y, children }) {
 const width = 500;
 const height = 500;
 
-const fillArcs = d => {
-  const { label } = d.data;
-  if (label === "New Record") return "#292F36";
-  if (label === "Below") return "#0088FE";
-  if (label === "Slightly Below") return "#7FB069";
-  if (label === "Slightly Above") return "#FFBB28";
-  if (label === "Above") return "#E63B2E";
-};
-
 @inject("store")
 @observer
 class ObservedGauge extends Component {
@@ -44,36 +27,56 @@ class ObservedGauge extends Component {
       daysAboveThresholdThisYear,
       temperature,
       observedMinMax,
-      observedQuantiles,
-      observedIndex
+      arcPercentages,
+      observedQuantilesNoDuplicates
     } = this.props.store.app;
 
-    console.log(observedMinMax);
-    console.log(observedQuantiles);
-    console.log(observedIndex);
+    const arcs = [
+      { label: "Below", quantile: arcPercentages[1], color: "#0088FE" },
+      {
+        label: "Slightly Below",
+        quantile: arcPercentages[2],
+        color: "#7FB069"
+      },
+      {
+        label: "Slightly Above",
+        quantile: arcPercentages[3],
+        color: "#FFBB28"
+      },
+      { label: "Above", quantile: arcPercentages[4], color: "#E63B2E" },
+      { label: "New Record", quantile: 20, color: "#292F36" }
+    ];
 
     const scale = d3
       .scaleLinear()
       .domain(observedMinMax)
       .range([0, 1]);
 
-    const percentToDeg = percent => percent * 288 / observedMinMax[1];
-    const innerTicks = scale
-      .ticks(24)
-      .filter(n => Number.isInteger(n))
-      .map(tick => ({
-        value: tick,
-        label: tick
-      }));
+    const percentToDeg = percent => 180 + percent * 288 / observedMinMax[1];
+
+    // const innerTicks = scale
+    //   .ticks(18)
+    //   .filter(n => Number.isInteger(n))
+    //   .map(tick => ({
+    //     value: tick,
+    //     label: tick
+    //   }));
+
+    const innerTicks = observedQuantilesNoDuplicates.map(tick => ({
+      value: tick,
+      label: tick
+    }));
 
     const radius = Math.min(width, height) / 1.8;
 
     const rotate = d => {
       const ratio = scale(d.value);
-      const newAngle = -144 + ratio * 288;
-      console.log(newAngle);
+      const newAngle = ratio * 288;
+      // console.log(newAngle);
       return `rotate(${newAngle}) translate(0, ${-(radius / 2.1)})`;
     };
+
+    const getAngle = d => {};
 
     return (
       <Box>
@@ -93,12 +96,14 @@ class ObservedGauge extends Component {
           />
           <Group top={height / 2} left={width / 2}>
             <Arc
-              data={browsers}
-              pieValue={d => d.usage}
+              pieSort={d => getAngle(d)}
+              data={arcs}
+              pieValue={d => d.quantile}
               outerRadius={radius - 80}
               innerRadius={radius - 130}
-              fill={d => fillArcs(d)}
+              fill={d => d.data.color}
               cornerRadius={3}
+              // angle={d => console.log(d)}
               padAngle={0}
               centroid={(centroid, arc) => {
                 const [x, y] = centroid;
@@ -111,6 +116,7 @@ class ObservedGauge extends Component {
                 );
               }}
             />
+
             <circle cx={0} cy={0} r={4} />
             <line
               stroke="#2A2F36"
@@ -119,10 +125,12 @@ class ObservedGauge extends Component {
               y1={-15}
               x2={0}
               y2={radius / 2.1 - 6}
-              transform={`rotate(${percentToDeg(daysAboveThresholdThisYear)})`}
+              transform={`rotate(${percentToDeg(46)})`}
             />
+
             <g>
               {innerTicks.map((e, i) => {
+                // console.log(e);
                 return (
                   <text
                     style={{ fill: "#333", fontSize: "11px" }}

@@ -72,3 +72,12 @@ export const index = (daysAbovethreshold, quantiles) => {
   console.log(`d: ${d}, Qlength: 1`);
   if (q.length === 1) return 0;
 };
+
+export const arcMatchColor = d => {
+  const { label } = d.data;
+  if (label === "New Record") return "#292F36";
+  if (label === "Below") return "#0088FE";
+  if (label === "Slightly Below") return "#7FB069";
+  if (label === "Slightly Above") return "#FFBB28";
+  if (label === "Above") return "#E63B2E";
+};
