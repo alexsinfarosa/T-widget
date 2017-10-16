@@ -37,12 +37,12 @@ export const index = (daysAbovethreshold, quantiles) => {
 
   if (q.length === 5) {
     console.log(`d: ${d}, Qlength: 5`);
-    if (d < q[0]) return 0;
-    if (d >= q[0] && d <= q[1]) return 1;
-    if (d > q[1] && d < q[2]) return 2;
-    if (d === q[2]) return 3;
-    if (d > q[2] && d <= q[3]) return 3;
-    if (d > q[3]) return 4;
+    if (d < q[0]) return 4;
+    if (d > q[0] && d < q[1]) return 0;
+    if (d > q[1] && d < q[2]) return 1;
+    if (d > q[2] && d < q[3]) return 2;
+    if (d > q[3] && d < q[4]) return 3;
+    if (d > q[4]) return 4;
   }
 
   if (q.length === 4) {

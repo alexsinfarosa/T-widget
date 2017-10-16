@@ -68,7 +68,7 @@ export default class appStore {
   get arcPercentages() {
     const tot = this.observedQuantilesNoDuplicates.reduce((a, b) => a + b, 0);
     const perc = this.observedQuantilesNoDuplicates.map(
-      q => (q !== 0 ? q / tot * 80 : 0)
+      q => (q !== 0 ? q / tot * 90 : 0)
     );
     // console.log(perc, perc.reduce((a, b) => a + b, 0));
     return perc;

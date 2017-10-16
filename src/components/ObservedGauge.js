@@ -73,7 +73,9 @@ class ObservedGauge extends Component {
       return `translate(${d[0]}, ${d[1]})`;
     };
 
-    const getAngle = d => {};
+    const getAngle = d => {
+      console.log(d);
+    };
 
     return (
       <Box>
@@ -105,10 +107,10 @@ class ObservedGauge extends Component {
               centroid={(centroid, arc) => {
                 const [x, y] = centroid;
                 const { startAngle, endAngle } = arc;
-                s_x = x + radius * Math.cos(startAngle * Math.PI);
-                s_y = y + radius * Math.sin(startAngle * Math.PI);
-                e_x = x + radius * Math.cos(endAngle * Math.PI);
-                e_y = y + radius * Math.sin(endAngle * Math.PI);
+                // s_x = x + radius * Math.cos(startAngle * Math.PI);
+                // s_y = y + radius * Math.sin(startAngle * Math.PI);
+                // e_x = x + radius * Math.cos(endAngle * Math.PI);
+                // e_y = y + radius * Math.sin(endAngle * Math.PI);
                 if (endAngle - startAngle < 0.1) return null;
                 return (
                   <Label x={x} y={y}>
