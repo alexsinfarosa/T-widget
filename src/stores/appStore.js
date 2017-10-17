@@ -70,7 +70,7 @@ export default class appStore {
     const perc = this.observedQuantilesNoDuplicates.map(
       q => (q !== 0 ? q / tot * 90 : 0)
     );
-    // console.log(perc, perc.reduce((a, b) => a + b, 0));
+    console.log(perc, perc.reduce((a, b) => a + b, 0));
     return perc;
   }
   @computed

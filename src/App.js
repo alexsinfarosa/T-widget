@@ -7,7 +7,7 @@ import { Spin } from "antd";
 // components
 import StationsMenu from "components/StationsMenu";
 import TempSlider from "components/TempSlider";
-import ObservedGauge2 from "components/ObservedGauge2";
+import ObservedGauge from "components/ObservedGauge";
 
 // Styled components
 import { Page } from "styles";
@@ -23,7 +23,7 @@ class App extends Component {
         <br />
         <TempSlider />
         <br />
-        {!isLoading ? <ObservedGauge2 /> : <Spin />}
+        {!isLoading ? <ObservedGauge /> : <Spin />}
       </Page>
     );
   }
