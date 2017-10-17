@@ -32,12 +32,7 @@ const renderCustomizedLabel = ({
   const xL = cx + (innerRadius + (outerRadius - innerRadius) / 2) * cosL;
   const yL = cy + (innerRadius + (outerRadius - innerRadius) / 2) * sinL;
 
-  // Provides coordinates above each arc of the Pie
-  //     const sx = cx + (innerRadius + 0) * cos;
-  //     const sy = cy + (innerRadius + 0) * sin;
-  //     const mx = cx + (innerRadius - 10) * cos;
-  //     const my = cy + (innerRadius - 10) * sin;
-  //   <path d={`M${sx},${sy} L${mx},${my}`} stroke={"black"} fill="none" />
+  const { name } = payload;
 
   return (
     <g>
@@ -48,15 +43,20 @@ const renderCustomizedLabel = ({
         textAnchor={x > cx ? "middle" : "middle"}
         dominantBaseline="central"
       >
-        {payload.Q}
+        {payload.endArcQuantile}
       </text>
+      {(name === "Min" ||
+        name === "25%" ||
+        name === "Mean" ||
+        name === "75%" ||
+        name === "Max") && <circle cx={xL} cy={yL} r={12} />}
       <text
-        fill="white"
+        fill="#FBF5F3"
         textAnchor="middle"
         x={xL}
         y={yL}
         dy=".33em"
-        fontSize={10}
+        fontSize={9}
       >
         {payload.name}
       </text>
@@ -84,7 +84,7 @@ const renderActiveShape = props => {
     percent,
     value
   } = props;
-  console.log(props);
+
   const sin = Math.sin(-RADIAN * midAngle);
   const cos = Math.cos(-RADIAN * midAngle);
   const sx = cx + (outerRadius + 10) * cos;
@@ -95,18 +95,53 @@ const renderActiveShape = props => {
   const ey = my;
   const textAnchor = cos >= 0 ? "start" : "end";
 
+  const { startArcQuantile, endArcQuantile, daysAbove } = payload;
+
+  let anglesDiff = endAngle - startAngle;
+  if (anglesDiff < 0) anglesDiff = anglesDiff * -1;
+
+  let quantilesDiff = endArcQuantile - startArcQuantile;
+  if (quantilesDiff === 0) quantilesDiff = endArcQuantile;
+
+  const oneDeg = anglesDiff / quantilesDiff;
+
+  let theta = (endArcQuantile - daysAbove) * oneDeg;
+  if (theta < 0) theta = theta * -1;
+
   return (
     <g>
-      <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill} />
+      <text
+        x={cx}
+        y={cy - 20}
+        dy={8}
+        textAnchor="middle"
+        fill={fill}
+        dy=".33em"
+        fontSize={12}
+      >
+        Observed Data
+      </text>
+      <text
+        x={cx}
+        y={cy + 20}
+        dy={8}
+        textAnchor="middle"
+        fill={fill}
+        dy=".33em"
+        fontSize={14}
+      >
+        {daysAbove}
+      </text>
       <circle cx={cx} cy={cy} r={4} />
+      <circle cx={cx} cy={cy} r={2} fill="#FBF5F3" />
       <line
         stroke="#2A2F36"
         strokeWidth={1}
         x1={cx}
         y1={cy + 15}
         x2={cx}
-        y2={radius / 2 + 45}
-        transform={`rotate(${startAngle} ${cx} ${cy})`}
+        y2={radius / 2 + 50}
+        transform={`rotate(${-endAngle + 90 - theta} ${cx} ${cy})`}
       />
       <Sector
         cx={cx}
@@ -137,7 +172,7 @@ const renderActiveShape = props => {
         y={ey}
         textAnchor={textAnchor}
         fill={fill}
-      >{`${payload.d} days > ${payload.t} ˚F This Year`}</text>
+      >{`${payload.daysAbove} days > ${payload.t} ˚F This Year`}</text>
       <text
         x={ex + (cos >= 0 ? 1 : -1) * 12}
         y={ey}
@@ -166,50 +201,100 @@ export default class ObservedGauge2 extends Component {
 
     const data = [
       {
+        name: "Min",
+        startArcQuantile: observedQuantilesNoDuplicates[0],
+        endArcQuantile: observedQuantilesNoDuplicates[0],
+        daysAbove: daysAboveThresholdThisYear,
+        t: temperature
+      },
+      {
         name: "Below",
         value: arcPercentages[0],
-        Q: observedQuantilesNoDuplicates[1],
-        d: daysAboveThresholdThisYear,
+        startArcQuantile: observedQuantilesNoDuplicates[0],
+        endArcQuantile: observedQuantilesNoDuplicates[1],
+        daysAbove: daysAboveThresholdThisYear,
+        t: temperature
+      },
+      {
+        name: "25%",
+        startArcQuantile: observedQuantilesNoDuplicates[1],
+        endArcQuantile: observedQuantilesNoDuplicates[1],
+        daysAbove: daysAboveThresholdThisYear,
         t: temperature
       },
       {
         name: "Slightly Below",
         value: arcPercentages[1],
-        Q: observedQuantilesNoDuplicates[2],
-        d: daysAboveThresholdThisYear,
+        startArcQuantile: observedQuantilesNoDuplicates[1],
+        endArcQuantile: observedQuantilesNoDuplicates[2],
+        daysAbove: daysAboveThresholdThisYear,
+        t: temperature
+      },
+      {
+        name: "Mean",
+        startArcQuantile: observedQuantilesNoDuplicates[2],
+        endArcQuantile: observedQuantilesNoDuplicates[2],
+        daysAbove: daysAboveThresholdThisYear,
         t: temperature
       },
       {
         name: "Slightly Above",
         value: arcPercentages[2],
-        Q: observedQuantilesNoDuplicates[3],
-        d: daysAboveThresholdThisYear,
+        startArcQuantile: observedQuantilesNoDuplicates[2],
+        endArcQuantile: observedQuantilesNoDuplicates[3],
+        daysAbove: daysAboveThresholdThisYear,
+        t: temperature
+      },
+      {
+        name: "75%",
+        startArcQuantile: observedQuantilesNoDuplicates[3],
+        endArcQuantile: observedQuantilesNoDuplicates[3],
+        daysAbove: daysAboveThresholdThisYear,
         t: temperature
       },
       {
         name: "Above",
         value: arcPercentages[3],
-        Q: observedQuantilesNoDuplicates[4],
-        d: daysAboveThresholdThisYear,
+        startArcQuantile: observedQuantilesNoDuplicates[3],
+        endArcQuantile: observedQuantilesNoDuplicates[4],
+        daysAbove: daysAboveThresholdThisYear,
+        t: temperature
+      },
+      {
+        name: "Max",
+        startArcQuantile: observedQuantilesNoDuplicates[4],
+        endArcQuantile: observedQuantilesNoDuplicates[4],
+        daysAbove: daysAboveThresholdThisYear,
         t: temperature
       },
       {
         name: "New Record",
         value: 10,
-        Q: observedQuantilesNoDuplicates[0],
+        startArcQuantile: observedQuantilesNoDuplicates[4],
+        endArcQuantile: observedQuantilesNoDuplicates[0],
         d: daysAboveThresholdThisYear,
         t: temperature
       }
     ];
 
-    const COLORS = ["#0088FE", "#7FB069", "#FFBB28", "#E63B2E", "#292F36"];
+    const COLORS = [
+      "#073B3A",
+      "#0088FE",
+      "#073B3A",
+      "#7FB069",
+      "#073B3A",
+      "#FFBB28",
+      "#073B3A",
+      "#E63B2E",
+      "#073B3A",
+      "#292F36"
+    ];
     const cell = data.map((entry, index) => {
       return <Cell key={index} fill={COLORS[index % COLORS.length]} />;
     });
 
     return (
       <Box>
-        <h3>Observed Data</h3>
         <PieChart width={width} height={height}>
           <Pie
             activeIndex={observedIndex}

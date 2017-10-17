@@ -79,10 +79,6 @@ class ObservedGauge extends Component {
 
     return (
       <Box>
-        <h3>
-          Observed Data: {daysAboveThresholdThisYear} Days > {temperature}˚F
-          This Year
-        </h3>
         <svg width={width} height={height}>
           <GradientPinkBlue id="gradients" />
           <rect

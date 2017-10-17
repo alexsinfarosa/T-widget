@@ -37,12 +37,26 @@ export const index = (daysAbovethreshold, quantiles) => {
 
   if (q.length === 5) {
     console.log(`d: ${d}, Qlength: 5`);
-    if (d < q[0]) return 4;
-    if (d > q[0] && d < q[1]) return 0;
-    if (d > q[1] && d < q[2]) return 1;
-    if (d > q[2] && d < q[3]) return 2;
-    if (d > q[3] && d < q[4]) return 3;
-    if (d > q[4]) return 4;
+    // is the min
+    if (d === q[0]) return 0;
+    // is below
+    if (d > q[0] && d < q[1]) return 1;
+    // is the 25th percentile
+    if (d === q[1]) return 2;
+    // is slightly below
+    if (d > q[1] && d < q[2]) return 3;
+    // is the mean
+    if (d === q[2]) return 4;
+    // is slightly above
+    if (d > q[2] && d < q[3]) return 5;
+    // is the 75% percentile
+    if (d === q[3]) return 6;
+    // is above
+    if (d > q[3] && d < q[4]) return 7;
+    // is equal to max
+    if (d === q[4]) return 8;
+    // new record
+    if (d < q[0] || d > q[4]) return 9;
   }
 
   if (q.length === 4) {
