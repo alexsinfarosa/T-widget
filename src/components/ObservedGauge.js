@@ -34,37 +34,18 @@ const renderCustomizedLabel = ({
   const xL = cx + (innerRadius + (outerRadius - innerRadius) / 2) * cosL;
   const yL = cy + (innerRadius + (outerRadius - innerRadius) / 2) * sinL;
 
-  const { name } = payload;
   return (
     <g>
-      {(name === "Min" || name === "Max") && (
-        <text
-          x={x}
-          y={y}
-          fill="black"
-          textAnchor={x > cx ? "middle" : "middle"}
-          dominantBaseline="central"
-        >
-          {payload.endArcQuantile}
-        </text>
-      )}
-      {name !== "Min" &&
-        name !== "25%" &&
-        name !== "Mean" &&
-        name !== "75%" &&
-        name !== "Max" &&
-        name !== "New Record" && (
-          <text
-            fill="#FBF5F3"
-            textAnchor="middle"
-            x={xL}
-            y={yL}
-            dy="-.8em"
-            fontSize={9}
-          >
-            {payload.endArcQuantile} days
-          </text>
-        )}
+      <text
+        x={x}
+        y={y}
+        fill="black"
+        textAnchor={x > cx ? "middle" : "middle"}
+        dominantBaseline="central"
+      >
+        {payload.endArcQuantile}
+      </text>
+      )
       <text
         fill="#FBF5F3"
         textAnchor="middle"
@@ -95,8 +76,7 @@ const renderActiveShape = props => {
     endAngle,
     fill,
     payload,
-    percent,
-    value
+    percent
   } = props;
 
   const sin = Math.sin(-RADIAN * midAngle);
@@ -130,7 +110,6 @@ const renderActiveShape = props => {
         dy={8}
         textAnchor="middle"
         fill={fill}
-        dy=".33em"
         fontSize={12}
       >
         Observed Data
@@ -141,7 +120,6 @@ const renderActiveShape = props => {
         dy={8}
         textAnchor="middle"
         fill={fill}
-        dy=".33em"
         fontSize={14}
       >
         {daysAbove}
@@ -223,7 +201,7 @@ export default class ObservedGauge2 extends Component {
       },
       {
         name: "Below",
-        value: arcPercentages[0],
+        value: 1,
         startArcQuantile: observedQuantilesNoDuplicates[0],
         endArcQuantile: observedQuantilesNoDuplicates[1],
         daysAbove: daysAboveThresholdThisYear,
@@ -238,7 +216,7 @@ export default class ObservedGauge2 extends Component {
       },
       {
         name: "Slightly Below",
-        value: arcPercentages[1],
+        value: 1,
         startArcQuantile: observedQuantilesNoDuplicates[1],
         endArcQuantile: observedQuantilesNoDuplicates[2],
         daysAbove: daysAboveThresholdThisYear,
@@ -253,7 +231,7 @@ export default class ObservedGauge2 extends Component {
       },
       {
         name: "Slightly Above",
-        value: arcPercentages[2],
+        value: 1,
         startArcQuantile: observedQuantilesNoDuplicates[2],
         endArcQuantile: observedQuantilesNoDuplicates[3],
         daysAbove: daysAboveThresholdThisYear,
@@ -268,7 +246,7 @@ export default class ObservedGauge2 extends Component {
       },
       {
         name: "Above",
-        value: arcPercentages[3],
+        value: 1,
         startArcQuantile: observedQuantilesNoDuplicates[3],
         endArcQuantile: observedQuantilesNoDuplicates[4],
         daysAbove: daysAboveThresholdThisYear,
@@ -283,7 +261,7 @@ export default class ObservedGauge2 extends Component {
       },
       {
         name: "New Record",
-        value: 10,
+        value: 1,
         startArcQuantile: observedQuantilesNoDuplicates[4],
         endArcQuantile: observedQuantilesNoDuplicates[0],
         d: daysAboveThresholdThisYear,
@@ -301,8 +279,8 @@ export default class ObservedGauge2 extends Component {
           <Pie
             activeIndex={observedIndex}
             activeShape={renderActiveShape}
-            startAngle={250}
-            endAngle={-110}
+            startAngle={90 + 144}
+            endAngle={-126}
             data={data}
             cx={width / 2}
             cy={height / 2}

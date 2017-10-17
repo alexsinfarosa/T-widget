@@ -115,7 +115,6 @@ export const index = (daysAbovethreshold, quantiles) => {
 };
 
 export const arcColoring = name => {
-  console.log(name);
   if (name === "Min") return "#073B3A";
   if (name === "Below") return "#0088FE";
   if (name === "25%") return "#073B3A";
