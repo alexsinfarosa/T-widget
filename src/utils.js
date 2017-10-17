@@ -8,12 +8,12 @@ export const reevaluateQuantiles = q => {
 
   if (_min === _25 && _25 === _50 && _50 === _75 && _75 === _max) {
     console.log(`q = max: [${_max}]`);
-    return [_max];
+    return [_50];
   }
 
   if (_min === _25 && _25 === _50 && _50 === _75) {
     console.log(`q = [50]: [${_50}]`);
-    return [_50];
+    return [_50, _75];
   }
 
   if (_min === _25 && _25 === _50) {
@@ -61,52 +61,69 @@ export const index = (daysAbovethreshold, quantiles) => {
 
   if (q.length === 4) {
     console.log(`d: ${d}, Qlength: 4`);
-    // is the min
+    // is the 25%
     if (d === q[0]) return 0;
-    // is below
-    if (d > q[0] && d < q[1]) return 1;
-    // is the 25th percentile
-    if (d === q[1]) return 2;
     // is slightly below
-    if (d > q[1] && d < q[2]) return 3;
-    // is the mean
-    if (d === q[2]) return 4;
+    if (d > q[0] && d < q[1]) return 1;
+    // is the Mean
+    if (d === q[1]) return 2;
     // is slightly above
-    if (d > q[2] && d < q[3]) return 5;
-    // is the 75% percentile
-    if (d === q[3]) return 6;
+    if (d > q[1] && d < q[2]) return 3;
+    // is the 75%
+    if (d === q[2]) return 4;
     // is above
-    if (d > q[3] && d < q[4]) return 7;
-    // is equal to max
-    if (d === q[4]) return 8;
+    if (d > q[2] && d < q[3]) return 5;
+    // is the Max
+    if (d === q[3]) return 6;
     // new record
-    if (d < q[0] || d > q[4]) return 9;
+    if (d < q[0] || d > q[3]) return 7;
   }
 
   if (q.length === 3) {
     console.log(`d: ${d}, Qlength: 3`);
-    if (d < q[0]) return 0;
-    if (d === q[0]) return 1;
-    if (d > q[0] && d <= q[1]) return 1;
-    if (d > q[1]) return 2;
+    // is the Mean
+    if (d === q[0]) return 0;
+    // is slightly above
+    if (d > q[0] && d < q[1]) return 1;
+    // is the 75th percentile
+    if (d === q[1]) return 2;
+    // is above
+    if (d > q[1] && d < q[2]) return 3;
+    // is the Max
+    if (d === q[2]) return 4;
+    // new record
+    if (d < q[0] || d > q[2]) return 5;
   }
 
   if (q.length === 2) {
     console.log(`d: ${d}, Qlength: 2`);
-    if (d < q[0]) return 0;
-    if (d === q[0]) return 1;
-    if (d > q[0]) return 1;
+    // is the Mean
+    if (d === q[0]) return 0;
+    // is slightly above
+    if (d > q[0] && d < q[1]) return 1;
+    // is 75% percentile
+    if (d === q[1]) return 2;
+    // new record
+    if (d < q[0] || d > q[1]) return 3;
   }
 
   console.log(`d: ${d}, Qlength: 1`);
-  if (q.length === 1) return 0;
+  // is the Mean
+  if (d === q[0]) return 0;
+  if (d > q[0]) return 1;
+  if (d < q[0]) return 2;
 };
 
-export const arcMatchColor = d => {
-  const { label } = d.data;
-  if (label === "New Record") return "#292F36";
-  if (label === "Below") return "#0088FE";
-  if (label === "Slightly Below") return "#7FB069";
-  if (label === "Slightly Above") return "#FFBB28";
-  if (label === "Above") return "#E63B2E";
+export const arcColoring = name => {
+  console.log(name);
+  if (name === "Min") return "#073B3A";
+  if (name === "Below") return "#0088FE";
+  if (name === "25%") return "#073B3A";
+  if (name === "Slightly Below") return "#7FB069";
+  if (name === "Mean") return "#073B3A";
+  if (name === "Slightly Above") return "#FFBB28";
+  if (name === "75%") return "#073B3A";
+  if (name === "Above") return "#E63B2E";
+  if (name === "Max") return "#073B3A";
+  if (name === "New Record") return "#292F36";
 };

@@ -3,6 +3,8 @@ import { inject, observer } from "mobx-react";
 
 import { PieChart, Pie, Sector, Cell } from "recharts";
 
+import { arcColoring } from "utils";
+
 // styled components
 import { Box } from "styles";
 
@@ -33,7 +35,6 @@ const renderCustomizedLabel = ({
   const yL = cy + (innerRadius + (outerRadius - innerRadius) / 2) * sinL;
 
   const { name } = payload;
-  console.log(payload);
   return (
     <g>
       {(name === "Min" || name === "Max") && (
@@ -290,20 +291,8 @@ export default class ObservedGauge2 extends Component {
       }
     ];
 
-    const COLORS = [
-      "#073B3A",
-      "#0088FE",
-      "#073B3A",
-      "#7FB069",
-      "#073B3A",
-      "#FFBB28",
-      "#073B3A",
-      "#E63B2E",
-      "#073B3A",
-      "#292F36"
-    ];
-    const cell = data.map((entry, index) => {
-      return <Cell key={index} fill={COLORS[index % COLORS.length]} />;
+    const cell = data.map((arc, index) => {
+      return <Cell key={index} fill={arcColoring(arc.name)} />;
     });
 
     return (
