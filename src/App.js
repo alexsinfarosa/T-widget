@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 
 // antd components
-import { Spin } from "antd";
+import { Spin, Button } from "antd";
 
 // components
 import StationsMenu from "components/StationsMenu";
@@ -22,6 +22,17 @@ class App extends Component {
         <StationsMenu />
         <br />
         <TempSlider />
+        <br />
+
+        <Button
+          type={false ? "primary" : "default"}
+          icon="bar-chart"
+          size="large"
+          onClick={() => this.props.store.app.setIsGraph(true)}
+        >
+          Time Series Graph
+        </Button>
+
         <br />
         {!isLoading ? <ObservedGauge /> : <Spin />}
       </Page>

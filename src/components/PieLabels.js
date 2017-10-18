@@ -44,7 +44,7 @@ const PieLabels = ({
         name === "25%" ||
         name === "Mean" ||
         name === "75%" ||
-        name === "Max") && <circle cx={xL} cy={yL} r={14} fill="#393A3A" />}
+        name === "Max") && <circle cx={xL} cy={yL} r={14} fill="#565656" />}
       <text
         fill="#FBF5F3"
         textAnchor="middle"

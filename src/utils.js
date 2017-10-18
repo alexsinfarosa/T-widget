@@ -7,13 +7,13 @@ export const reevaluateQuantiles = q => {
   const _max = q[4];
 
   if (_min === _25 && _25 === _50 && _50 === _75 && _75 === _max) {
-    console.log(`q = [50, max]: [${_50}, ${_max}]`);
-    return [_50, _max];
+    console.log(`q = [max]: [${_50}, ${_max}]`);
+    return [_max];
   }
 
   if (_min === _25 && _25 === _50 && _50 === _75) {
-    console.log(`q = [50, max]: [${_50}, ${_max}]`);
-    return [_50, _max];
+    console.log(`q = [75, max]: [${_50}, ${_max}]`);
+    return [_75, _max];
   }
 
   if (_min === _25 && _25 === _50) {
@@ -97,20 +97,11 @@ export const index = (daysAbovethreshold, quantiles) => {
 
   if (q.length === 2) {
     console.log(`d: ${d}, Qlength: 2`);
-    // is the Mean
-    // if (d === q[0]) return 0;
-    // is slightly above
-    // if (d > q[0] && d < q[1]) return 1;
-    // is 75% percentile
-    // if (d === q[1]) return 2;
-    // new record
-    // if (d < q[0] || d > q[1]) return 3;
-
-    // is the Mean
+    // is the 75%
     if (d === q[0]) return 0;
-    // is slightly above
+    // is above
     if (d > q[0]) return 1;
-    // is slightly below
+    // is slightly above
     if (d < q[0]) return 2;
   }
 
@@ -341,7 +332,7 @@ export const arcData = (q, days, temp) => {
         t: temp
       },
       {
-        name: "Slightly Above",
+        name: "Above",
         value: 1,
         startArcQuantile: q[0],
         endArcQuantile: q[1],

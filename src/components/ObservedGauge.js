@@ -8,19 +8,20 @@ import { arcColoring } from "utils";
 // components
 import PieLabels from "./PieLabels";
 import InnerCircle from "./InnerCircle";
+import TimeSeries from "./TimeSeries";
 
 // styled components
 import { Box } from "styles";
 
-const height = 500;
-const width = 1000;
+const height = 400;
+const width = 800;
 const radius = Math.min(width, height) / 2;
 
 @inject("store")
 @observer
 export default class ObservedGauge2 extends Component {
   render() {
-    const { observedIndex, observedArcData } = this.props.store.app;
+    const { observedIndex, observedArcData, isGraph } = this.props.store.app;
 
     const cell = observedArcData.map((arc, index) => {
       return <Cell key={index} fill={arcColoring(arc.name)} />;
@@ -45,6 +46,8 @@ export default class ObservedGauge2 extends Component {
             {cell}
           </Pie>
         </PieChart>
+
+        {isGraph && <TimeSeries width={width} height={height} />}
       </Box>
     );
   }

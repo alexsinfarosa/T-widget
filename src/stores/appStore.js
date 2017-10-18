@@ -15,6 +15,8 @@ export default class appStore {
   @observable protocol = window.location.protocol;
   @observable isLoading = false;
   @action setIsLoading = d => (this.isLoading = d);
+  @observable isGraph = false;
+  @action setIsGraph = d => (this.isGraph = !this.isGraph);
 
   // Stations -----------------------------------------------------------------------
   @observable
@@ -90,6 +92,22 @@ export default class appStore {
       this.daysAboveThresholdThisYear,
       this.temperature
     );
+  }
+
+  @computed
+  get observedDataGraph() {
+    const values = this.observedData.map(year => Number(year[1]));
+    let results = [];
+    this.observedData.forEach(d => {
+      results.push({
+        year: format(d[0], "YYYY"),
+        "days above": Number(d[1]),
+        mean: Math.round(jStat.quantiles(values, [0.5])),
+        color: ""
+      });
+    });
+
+    return results;
   }
 
   @action
