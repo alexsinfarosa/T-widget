@@ -13,7 +13,7 @@ import InnerCircle from "./InnerCircle";
 import { Box } from "styles";
 
 const height = 500;
-const width = 800;
+const width = 1000;
 const radius = Math.min(width, height) / 2;
 
 @inject("store")
