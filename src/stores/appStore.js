@@ -145,65 +145,60 @@ export default class appStore {
       });
   };
 
-  // @computed
-  // get observedTimeSeries() {
-  //   const values = this.observedData.map(year => Number(year[1]));
-  //   let results = [];
-  //   this.observedData.forEach(arr => {
-  //     results.push({
-  //       year: format(arr[0], "YYYY"),
-  //       "days above": Number(arr[1])
-  //     });
-  //   });
-
-  //   return results;
-  // }
-
   // Projection 2040-2069 ----------------------------------------------------------
-  // @observable projectedData2040 = [];
-  // @action
-  // setProjectedData2040 = d => {
-  //   // this.projectedData2040.clear();
-  //   this.projectedData2040 = d;
-  // };
+  @observable projectedData2040 = [];
+  @action
+  setProjectedData2040 = d => {
+    this.projectedData2040 = d;
+  };
 
-  // @action
-  // loadProjection2040() {
-  //   // this.setIsPLoading(true);
-  //   const params = {
-  //     bbox: [
-  //       this.station.lon,
-  //       this.station.lat + 0.1,
-  //       this.station.lon + 0.1,
-  //       this.station.lat
-  //     ],
-  //     // loc: `${this.station.lon}, ${this.station.lat}`,
-  //     sdate: [2040, Number(format(new Date(), "MM"))],
-  //     edate: [2069, Number(format(new Date(), "MM"))],
-  //     grid: "loca:wMean:rcp45",
-  //     elems: [
-  //       {
-  //         name: "maxt",
-  //         interval: [0, 1],
-  //         reduce: `mean`
-  //       }
-  //     ]
-  //   };
+  @action
+  loadProjection2040() {
+    // this.setIsPLoading(true);
+    const params = {
+      bbox: [
+        this.station.lon,
+        this.station.lat,
+        this.station.lon + 0.001,
+        this.station.lat + 0.001
+      ],
+      // loc: `${this.station.lon}, ${this.station.lat}`,
+      sdate: [2040, Number(format(new Date(), "MM"))],
+      edate: [2069, Number(format(new Date(), "MM"))],
+      grid: "loca:wMean:rcp45",
+      elems: [
+        {
+          name: "maxt",
+          interval: [0, 1],
+          reduce: `cnt_gt_90`
+        },
+        {
+          name: "maxt",
+          interval: [0, 1],
+          reduce: `cnt_gt_95`
+        },
+        {
+          name: "maxt",
+          interval: [0, 1],
+          reduce: `cnt_gt_100`
+        }
+      ]
+    };
 
-  //   console.log(params);
+    console.log(params);
 
-  //   return axios
-  //     .post(`${this.protocol}//grid2.rcc-acis.org/GridData`, params)
-  //     .then(res => {
-  //       console.log(res.data.data);
-  //       // this.setProjectedData2040(res.data.data);
-  //       // this.setp2040Mean();
-  //       // this.setIsPLoading(false);
-  //     })
-  //     .catch(err => {
-  //       console.log("Failed to load projection 2040-2069 ", err);
-  //     });
-  // }
+    return axios
+      .post(`${this.protocol}//grid2.rcc-acis.org/GridData`, params)
+      .then(res => {
+        console.log(res.data.data);
+        // this.setProjectedData2040(res.data.data);
+        // this.setp2040Mean();
+        // this.setIsPLoading(false);
+      })
+      .catch(err => {
+        console.log("Failed to load projection 2040-2069 ", err);
+      });
+  }
 
   //  PROJECTIONS ONLY! --------------------------------------------------
   // @computed

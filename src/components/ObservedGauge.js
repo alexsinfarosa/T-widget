@@ -15,7 +15,6 @@ import { Box } from "styles";
 
 const height = 400;
 const width = 800;
-const radius = Math.min(width, height) / 2;
 
 @inject("store")
 @observer
@@ -32,7 +31,7 @@ export default class ObservedGauge2 extends Component {
         <PieChart width={width} height={height}>
           <Pie
             activeIndex={observedIndex}
-            activeShape={<InnerCircle radius={radius} />}
+            activeShape={<InnerCircle />}
             startAngle={90 + 144}
             endAngle={-126}
             data={observedArcData}

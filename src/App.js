@@ -23,7 +23,6 @@ class App extends Component {
         <br />
         <TempSlider />
         <br />
-
         <Button
           type={false ? "primary" : "default"}
           icon="bar-chart"

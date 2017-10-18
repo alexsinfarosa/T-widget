@@ -8,4 +8,4 @@ const store = {
 export default store;
 
 store.app.loadObservedData();
-// store.app.loadProjection2040();
+store.app.loadProjection2040();
