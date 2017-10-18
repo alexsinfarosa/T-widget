@@ -51,7 +51,7 @@ const PieLabels = ({
         x={xL}
         y={yL}
         dy=".33em"
-        fontSize={9}
+        fontSize={10}
       >
         {payload.name}
       </text>

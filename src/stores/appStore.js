@@ -3,7 +3,7 @@ import { stations } from "stations";
 import format from "date-fns/format";
 // import addDays from "date-fns/add_days";
 import axios from "axios";
-// import spline from "cubic-spline";
+import spline from "cubic-spline";
 import { jStat } from "jStat";
 import { reevaluateQuantiles, index, arcData } from "utils";
 
@@ -15,6 +15,8 @@ export default class appStore {
   @observable protocol = window.location.protocol;
   @observable isLoading = false;
   @action setIsLoading = d => (this.isLoading = d);
+  @observable isPLoading = false;
+  @action setIsPLoading = d => (this.isPLoading = d);
   @observable isGraph = false;
   @action setIsGraph = d => (this.isGraph = !this.isGraph);
 
@@ -154,7 +156,7 @@ export default class appStore {
 
   @action
   loadProjection2040() {
-    // this.setIsPLoading(true);
+    this.setIsPLoading(true);
     const params = {
       bbox: [
         this.station.lon,
@@ -185,15 +187,14 @@ export default class appStore {
       ]
     };
 
-    console.log(params);
+    // console.log(params);
 
     return axios
       .post(`${this.protocol}//grid2.rcc-acis.org/GridData`, params)
       .then(res => {
         console.log(res.data.data);
-        // this.setProjectedData2040(res.data.data);
-        // this.setp2040Mean();
-        // this.setIsPLoading(false);
+        this.setProjectedData2040(res.data.data);
+        this.setIsPLoading(false);
       })
       .catch(err => {
         console.log("Failed to load projection 2040-2069 ", err);
@@ -201,21 +202,21 @@ export default class appStore {
   }
 
   //  PROJECTIONS ONLY! --------------------------------------------------
-  // @computed
-  // get daysAboveLastYear() {
-  //   if (this.observedData) {
-  //     const values = this.observedData.slice(-1)[0];
-  //     if (values) {
-  //       const x = [75, 80, 85, 90, 95, 100];
-  //       console.log(x);
-  //       const y = values.slice(1, 7).map(n => Number(n));
-  //       console.log(y);
-  //       const results = spline(this.temperature, x, y);
-  //       console.log(
-  //         `temp: ${this.temperature}, days above: ${Math.round(results)}`
-  //       );
-  //       return Math.round(results);
-  //     }
-  //   }
-  // }
+  @computed
+  get daysAbove2040() {
+    if (this.observedData) {
+      const values = this.observedData.slice(-1)[0];
+      if (values) {
+        const x = [90, 95, 100];
+        console.log(x);
+        const y = values.slice(1, 7).map(n => Number(n));
+        console.log(y);
+        const results = spline(this.temperature, x, y);
+        console.log(
+          `temp: ${this.temperature}, days above: ${Math.round(results)}`
+        );
+        return Math.round(results);
+      }
+    }
+  }
 }

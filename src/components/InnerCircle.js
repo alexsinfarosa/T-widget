@@ -83,7 +83,7 @@ const InnerCircle = ({
         x1={cx}
         y1={cy + 15}
         x2={cx}
-        y2={innerRadius + 20}
+        y2={innerRadius}
         transform={`rotate(${-endAngle + 90 - theta} ${cx} ${cy})`}
       />
       <Sector
