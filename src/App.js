@@ -8,6 +8,7 @@ import { Spin, Button } from "antd";
 import StationsMenu from "components/StationsMenu";
 import TempSlider from "components/TempSlider";
 import ObservedGauge from "components/ObservedGauge";
+import Projection2040 from "components/Projection2040";
 
 // Styled components
 import { Page } from "styles";
@@ -34,6 +35,8 @@ class App extends Component {
 
         <br />
         {!isLoading ? <ObservedGauge /> : <Spin />}
+        <br />
+        {!isLoading ? <Projection2040 /> : <Spin />}
       </Page>
     );
   }

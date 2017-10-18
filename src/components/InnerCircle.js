@@ -11,7 +11,8 @@ const InnerCircle = ({
   endAngle,
   fill,
   payload,
-  percent
+  percent,
+  type
 }) => {
   const RADIAN = Math.PI / 180;
 
@@ -63,7 +64,7 @@ const InnerCircle = ({
         fill={fill}
         fontSize={12}
       >
-        Observed Data
+        {type}
       </text>
       <text
         x={cx}
@@ -83,7 +84,7 @@ const InnerCircle = ({
         x1={cx}
         y1={cy + 15}
         x2={cx}
-        y2={innerRadius}
+        y2={innerRadius + 25}
         transform={`rotate(${-endAngle + 90 - theta} ${cx} ${cy})`}
       />
       <Sector

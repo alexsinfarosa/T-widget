@@ -201,7 +201,6 @@ export default class appStore {
       });
   }
 
-  //  PROJECTIONS ONLY! --------------------------------------------------
   @computed
   get daysAbove2040() {
     if (this.observedData) {

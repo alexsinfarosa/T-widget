@@ -13,10 +13,11 @@ export const Page = styled.section`
 
 export const Box = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
   border: 1px solid #d9d9d9;
   border-radius: 5px;
   padding: 1rem;
+  flex: 1;
 `;

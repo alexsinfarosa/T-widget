@@ -18,7 +18,7 @@ const width = 600;
 
 @inject("store")
 @observer
-export default class ObservedGauge2 extends Component {
+export default class Prohection2040 extends Component {
   render() {
     const { observedIndex, observedArcData, isGraph } = this.props.store.app;
 
@@ -28,10 +28,10 @@ export default class ObservedGauge2 extends Component {
 
     return (
       <Box>
-        <PieChart width={width} height={height} style={{ flex: 1 }}>
+        <PieChart width={width} height={height}>
           <Pie
             activeIndex={observedIndex}
-            activeShape={<InnerCircle type="Observed Data" />}
+            activeShape={<InnerCircle type="Projection 2040-2069" />}
             startAngle={90 + 144}
             endAngle={-126}
             data={observedArcData}
@@ -45,6 +45,7 @@ export default class ObservedGauge2 extends Component {
             {cell}
           </Pie>
         </PieChart>
+
         {isGraph && <TimeSeries width={width} height={height} />}
       </Box>
     );
