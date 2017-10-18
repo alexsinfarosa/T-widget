@@ -5,7 +5,7 @@ import format from "date-fns/format";
 import axios from "axios";
 // import spline from "cubic-spline";
 import { jStat } from "jStat";
-import { reevaluateQuantiles, index } from "utils";
+import { reevaluateQuantiles, index, arcData } from "utils";
 
 export default class appStore {
   constructor(fetch) {
@@ -83,6 +83,15 @@ export default class appStore {
     }
   }
 
+  @computed
+  get observedArcData() {
+    return arcData(
+      this.observedQuantilesNoDuplicates,
+      this.daysAboveThresholdThisYear,
+      this.temperature
+    );
+  }
+
   @action
   loadObservedData = () => {
     this.setIsLoading(true);
@@ -111,7 +120,6 @@ export default class appStore {
       .then(res => {
         // console.log(res.data.data);
         this.setObservedData(res.data.data);
-        // this.setQuantiles(res.data.data);
         this.setIsLoading(false);
       })
       .catch(err => {

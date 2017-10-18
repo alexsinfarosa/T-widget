@@ -7,13 +7,13 @@ export const reevaluateQuantiles = q => {
   const _max = q[4];
 
   if (_min === _25 && _25 === _50 && _50 === _75 && _75 === _max) {
-    console.log(`q = max: [${_max}]`);
-    return [_50];
+    console.log(`q = [50, max]: [${_50}, ${_max}]`);
+    return [_50, _max];
   }
 
   if (_min === _25 && _25 === _50 && _50 === _75) {
-    console.log(`q = [50]: [${_50}]`);
-    return [_50, _75];
+    console.log(`q = [50, max]: [${_50}, ${_max}]`);
+    return [_50, _max];
   }
 
   if (_min === _25 && _25 === _50) {
@@ -98,19 +98,28 @@ export const index = (daysAbovethreshold, quantiles) => {
   if (q.length === 2) {
     console.log(`d: ${d}, Qlength: 2`);
     // is the Mean
+    // if (d === q[0]) return 0;
+    // is slightly above
+    // if (d > q[0] && d < q[1]) return 1;
+    // is 75% percentile
+    // if (d === q[1]) return 2;
+    // new record
+    // if (d < q[0] || d > q[1]) return 3;
+
+    // is the Mean
     if (d === q[0]) return 0;
     // is slightly above
-    if (d > q[0] && d < q[1]) return 1;
-    // is 75% percentile
-    if (d === q[1]) return 2;
-    // new record
-    if (d < q[0] || d > q[1]) return 3;
+    if (d > q[0]) return 1;
+    // is slightly below
+    if (d < q[0]) return 2;
   }
 
   console.log(`d: ${d}, Qlength: 1`);
   // is the Mean
   if (d === q[0]) return 0;
+  // is slightly above
   if (d > q[0]) return 1;
+  // is slightly below
   if (d < q[0]) return 2;
 };
 
@@ -125,4 +134,235 @@ export const arcColoring = name => {
   if (name === "Above") return "#E63B2E";
   if (name === "Max") return "#073B3A";
   if (name === "New Record") return "#292F36";
+};
+
+export const arcData = (q, days, temp) => {
+  if (q.length === 5) {
+    return [
+      {
+        name: "Min",
+        startArcQuantile: q[0],
+        endArcQuantile: q[0],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "Below",
+        value: 1,
+        startArcQuantile: q[0],
+        endArcQuantile: q[1],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "25%",
+        startArcQuantile: q[1],
+        endArcQuantile: q[1],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "Slightly Below",
+        value: 1,
+        startArcQuantile: q[1],
+        endArcQuantile: q[2],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "Mean",
+        startArcQuantile: q[2],
+        endArcQuantile: q[2],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "Slightly Above",
+        value: 1,
+        startArcQuantile: q[2],
+        endArcQuantile: q[3],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "75%",
+        startArcQuantile: q[3],
+        endArcQuantile: q[3],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "Above",
+        value: 1,
+        startArcQuantile: q[3],
+        endArcQuantile: q[4],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "Max",
+        startArcQuantile: q[4],
+        endArcQuantile: q[4],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "New Record",
+        value: 1,
+        startArcQuantile: q[4],
+        endArcQuantile: q[0],
+        d: days,
+        t: temp
+      }
+    ];
+  }
+
+  if (q.length === 4) {
+    return [
+      {
+        name: "25%",
+        startArcQuantile: q[0],
+        endArcQuantile: q[0],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "Slightly Below",
+        value: 1,
+        startArcQuantile: q[0],
+        endArcQuantile: q[1],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "Mean",
+        startArcQuantile: q[1],
+        endArcQuantile: q[1],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "Slightly Above",
+        value: 1,
+        startArcQuantile: q[1],
+        endArcQuantile: q[2],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "75%",
+        startArcQuantile: q[2],
+        endArcQuantile: q[2],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "Above",
+        value: 1,
+        startArcQuantile: q[2],
+        endArcQuantile: q[3],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "Max",
+        startArcQuantile: q[3],
+        endArcQuantile: q[3],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "New Record",
+        value: 1,
+        startArcQuantile: q[3],
+        endArcQuantile: q[0],
+        d: days,
+        t: temp
+      }
+    ];
+  }
+  if (q.length === 3) {
+    return [
+      {
+        name: "Mean",
+        startArcQuantile: q[0],
+        endArcQuantile: q[0],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "Slightly Above",
+        value: 1,
+        startArcQuantile: q[0],
+        endArcQuantile: q[1],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "75%",
+        startArcQuantile: q[1],
+        endArcQuantile: q[1],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "Above",
+        value: 1,
+        startArcQuantile: q[1],
+        endArcQuantile: q[2],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "Max",
+        startArcQuantile: q[2],
+        endArcQuantile: q[2],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "New Record",
+        value: 1,
+        startArcQuantile: q[2],
+        endArcQuantile: q[0],
+        d: days,
+        t: temp
+      }
+    ];
+  }
+  // there is no length === 1
+  if (q.length === 2) {
+    return [
+      {
+        name: "Mean",
+        startArcQuantile: q[0],
+        endArcQuantile: q[0],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "Slightly Above",
+        value: 1,
+        startArcQuantile: q[0],
+        endArcQuantile: q[1],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "Max",
+        startArcQuantile: q[2],
+        endArcQuantile: q[2],
+        daysAbove: days,
+        t: temp
+      },
+      {
+        name: "New Record",
+        value: 1,
+        startArcQuantile: q[2],
+        endArcQuantile: q[0],
+        d: days,
+        t: temp
+      }
+    ];
+  }
 };
