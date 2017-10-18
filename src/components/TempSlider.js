@@ -19,14 +19,13 @@ class TempSlider extends Component {
   render() {
     const { temperature } = this.props.store.app;
     const marks = {
-      75: "75°F",
       80: "80°F",
       85: "85°F",
       90: "90°F",
       95: "95°F",
       100: {
         style: {
-          color: "#f50"
+          color: "#E63B2E"
         },
         label: <strong>100°F</strong>
       }
@@ -34,7 +33,7 @@ class TempSlider extends Component {
     return (
       <Slider
         style={{ width: "60%" }}
-        min={75}
+        min={80}
         marks={marks}
         defaultValue={temperature}
         onAfterChange={this.onChange}

@@ -1,7 +1,7 @@
 import { observable, action, computed } from "mobx";
 import { stations } from "stations";
 import format from "date-fns/format";
-// import addDays from "date-fns/add_days";
+import subMonths from "date-fns/sub_months";
 import axios from "axios";
 import spline from "cubic-spline";
 import { jStat } from "jStat";
@@ -94,7 +94,8 @@ export default class appStore {
     return arcData(
       this.observedQuantilesNoDuplicates,
       this.daysAboveThresholdThisYear,
-      this.temperature
+      this.temperature,
+      "New Record" // fix this
     );
   }
 
@@ -140,7 +141,7 @@ export default class appStore {
     return axios
       .post(`${this.protocol}//data.rcc-acis.org/StnData`, params)
       .then(res => {
-        // console.log(res.data.data);
+        console.log(res.data.data);
         this.setObservedData(res.data.data);
         this.setIsLoading(false);
       })
@@ -159,15 +160,15 @@ export default class appStore {
   @action
   loadProjection2040() {
     this.setIsPLoading(true);
+
+    // Subtract 5 months from the current month to get data for the spline function
+    const month = format(subMonths(new Date(), 5), "MM");
+    console.log(month);
+
     const params = {
-      bbox: [
-        this.station.lon,
-        this.station.lat,
-        this.station.lon + 0.001,
-        this.station.lat + 0.001
-      ], // loc: `${this.station.lon}, ${this.station.lat}`,
-      sdate: [2040, Number(format(new Date(), "MM"))],
-      edate: [2069, Number(format(new Date(), "MM"))],
+      loc: [this.station.lon, this.station.lat],
+      sdate: [2040, month],
+      edate: [2069, month],
       grid: "loca:wMean:rcp45",
       elems: [
         { name: "maxt", interval: [0, 1], reduce: `cnt_gt_90` },
@@ -182,7 +183,7 @@ export default class appStore {
       .post(`${this.protocol}//grid2.rcc-acis.org/GridData`, params)
       .then(res => {
         console.log(res.data.data);
-        this.setProjectedData2040(res.data.data);
+        // this.setProjectedData2040(res.data.data);
         this.setIsPLoading(false);
       })
       .catch(err => {

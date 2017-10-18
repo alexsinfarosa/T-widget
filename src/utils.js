@@ -124,10 +124,10 @@ export const arcColoring = name => {
   if (name === "75%") return "#073B3A";
   if (name === "Above") return "#E63B2E";
   if (name === "Max") return "#073B3A";
-  if (name === "New Record") return "#292F36";
+  if (name === "New Record" || name === "Not Expected") return "#292F36";
 };
 
-export const arcData = (q, days, temp) => {
+export const arcData = (q, days, temp, darkArcLabel) => {
   if (q.length === 5) {
     return [
       {
@@ -198,7 +198,7 @@ export const arcData = (q, days, temp) => {
         t: temp
       },
       {
-        name: "New Record",
+        name: darkArcLabel,
         value: 1,
         startArcQuantile: q[4],
         endArcQuantile: q[0],
@@ -263,7 +263,7 @@ export const arcData = (q, days, temp) => {
         t: temp
       },
       {
-        name: "New Record",
+        name: darkArcLabel,
         value: 1,
         startArcQuantile: q[3],
         endArcQuantile: q[0],
@@ -312,7 +312,7 @@ export const arcData = (q, days, temp) => {
         t: temp
       },
       {
-        name: "New Record",
+        name: darkArcLabel,
         value: 1,
         startArcQuantile: q[2],
         endArcQuantile: q[0],
@@ -347,7 +347,7 @@ export const arcData = (q, days, temp) => {
         t: temp
       },
       {
-        name: "New Record",
+        name: darkArcLabel,
         value: 1,
         startArcQuantile: q[2],
         endArcQuantile: q[0],

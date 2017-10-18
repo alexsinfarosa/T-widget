@@ -76,8 +76,6 @@ const InnerCircle = ({
       >
         {daysAbove}
       </text>
-      <circle cx={cx} cy={cy} r={4} />
-      <circle cx={cx} cy={cy} r={2} fill="#FBF5F3" />
       <line
         stroke="#2A2F36"
         strokeWidth={1}
@@ -87,6 +85,8 @@ const InnerCircle = ({
         y2={innerRadius + 25}
         transform={`rotate(${-endAngle + 90 - theta} ${cx} ${cy})`}
       />
+      <circle cx={cx} cy={cy} r={4} />
+      <circle cx={cx} cy={cy} r={2} fill="#FBF5F3" />
       <Sector
         cx={cx}
         cy={cy}
