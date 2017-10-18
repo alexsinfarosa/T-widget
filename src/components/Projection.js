@@ -18,9 +18,14 @@ const width = 600;
 
 @inject("store")
 @observer
-export default class Prohection2040 extends Component {
+export default class Prohection extends Component {
   render() {
-    const { observedIndex, observedArcData, isGraph } = this.props.store.app;
+    const {
+      observedIndex,
+      observedArcData,
+      isGraph,
+      selectedProjection
+    } = this.props.store.app;
 
     const cell = observedArcData.map((arc, index) => {
       return <Cell key={index} fill={arcColoring(arc.name)} />;
@@ -31,7 +36,7 @@ export default class Prohection2040 extends Component {
         <PieChart width={width} height={height}>
           <Pie
             activeIndex={observedIndex}
-            activeShape={<InnerCircle type="Projection 2040-2069" />}
+            activeShape={<InnerCircle type={selectedProjection} />}
             startAngle={90 + 144}
             endAngle={-126}
             data={observedArcData}

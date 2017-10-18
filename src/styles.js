@@ -19,5 +19,4 @@ export const Box = styled.div`
   border: 1px solid #d9d9d9;
   border-radius: 5px;
   padding: 1rem;
-  flex: 1;
 `;

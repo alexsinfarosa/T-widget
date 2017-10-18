@@ -19,6 +19,8 @@ export default class appStore {
   @action setIsPLoading = d => (this.isPLoading = d);
   @observable isGraph = false;
   @action setIsGraph = d => (this.isGraph = !this.isGraph);
+  @observable selectedProjection = "Projection 2040-2069";
+  @action setProjection = d => (this.selectedProjection = d);
 
   // Stations -----------------------------------------------------------------------
   @observable
@@ -163,27 +165,14 @@ export default class appStore {
         this.station.lat,
         this.station.lon + 0.001,
         this.station.lat + 0.001
-      ],
-      // loc: `${this.station.lon}, ${this.station.lat}`,
+      ], // loc: `${this.station.lon}, ${this.station.lat}`,
       sdate: [2040, Number(format(new Date(), "MM"))],
       edate: [2069, Number(format(new Date(), "MM"))],
       grid: "loca:wMean:rcp45",
       elems: [
-        {
-          name: "maxt",
-          interval: [0, 1],
-          reduce: `cnt_gt_90`
-        },
-        {
-          name: "maxt",
-          interval: [0, 1],
-          reduce: `cnt_gt_95`
-        },
-        {
-          name: "maxt",
-          interval: [0, 1],
-          reduce: `cnt_gt_100`
-        }
+        { name: "maxt", interval: [0, 1], reduce: `cnt_gt_90` },
+        { name: "maxt", interval: [0, 1], reduce: `cnt_gt_95` },
+        { name: "maxt", interval: [0, 1], reduce: `cnt_gt_100` }
       ]
     };
 

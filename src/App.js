@@ -8,7 +8,8 @@ import { Spin, Button } from "antd";
 import StationsMenu from "components/StationsMenu";
 import TempSlider from "components/TempSlider";
 import ObservedGauge from "components/ObservedGauge";
-import Projection2040 from "components/Projection2040";
+import Projection from "components/Projection";
+import ProjectionButtons from "components/ProjectionButtons";
 
 // Styled components
 import { Page } from "styles";
@@ -17,7 +18,7 @@ import { Page } from "styles";
 @observer
 class App extends Component {
   render() {
-    const { isLoading } = this.props.store.app;
+    const { isLoading, isGraph } = this.props.store.app;
     return (
       <Page>
         <StationsMenu />
@@ -25,7 +26,7 @@ class App extends Component {
         <TempSlider />
         <br />
         <Button
-          type={false ? "primary" : "default"}
+          type={isGraph ? "primary" : "default"}
           icon="bar-chart"
           size="large"
           onClick={() => this.props.store.app.setIsGraph(true)}
@@ -36,7 +37,8 @@ class App extends Component {
         <br />
         {!isLoading ? <ObservedGauge /> : <Spin />}
         <br />
-        {!isLoading ? <Projection2040 /> : <Spin />}
+        {!isLoading ? <Projection /> : <Spin />}
+        {!isLoading ? <ProjectionButtons /> : <Spin />}
       </Page>
     );
   }
