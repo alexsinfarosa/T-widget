@@ -2,10 +2,11 @@ import { observable, action, computed } from "mobx";
 import { stations } from "stations";
 import format from "date-fns/format";
 import subMonths from "date-fns/sub_months";
+import differenceInCalendarMonths from "date-fns/difference_in_calendar_months";
 import axios from "axios";
 import spline from "cubic-spline";
 import { jStat } from "jStat";
-import { reevaluateQuantiles, index, arcData } from "utils";
+import { reevaluateQuantiles, index, arcData, transposeReduce } from "utils";
 
 export default class appStore {
   constructor(fetch) {
@@ -42,21 +43,19 @@ export default class appStore {
 
   // Observed data -------------------------------------------------------------------
   @observable observedData = [];
+
   @action setObservedData = d => (this.observedData = d);
+
   @computed
   get daysAboveThresholdThisYear() {
     return this.observedData.slice(-1).map(arr => Number(arr[1]))[0];
   }
+
   @computed
   get observedDays() {
     return this.observedData.map(arr => Number(arr[1]));
   }
 
-  @computed
-  get observedMinMax() {
-    const values = this.observedData.map(arr => Number(arr[1]));
-    return [Math.min(...values), Math.max(...values)];
-  }
   @computed
   get observedQuantiles() {
     if (this.observedDays.length !== 0) {
@@ -64,21 +63,14 @@ export default class appStore {
       return q.map(n => Math.round(n));
     }
   }
+
   @computed
   get observedQuantilesNoDuplicates() {
     if (this.observedDays.length !== 0) {
       return reevaluateQuantiles(this.observedQuantiles);
     }
   }
-  @computed
-  get arcPercentages() {
-    const tot = this.observedQuantilesNoDuplicates.reduce((a, b) => a + b, 0);
-    const perc = this.observedQuantilesNoDuplicates.map(
-      q => (q !== 0 ? q / tot * 90 : 0)
-    );
-    // console.log(perc, perc.reduce((a, b) => a + b, 0));
-    return perc;
-  }
+
   @computed
   get observedIndex() {
     if (this.observedDays.length !== 0) {
@@ -95,8 +87,8 @@ export default class appStore {
       this.observedQuantilesNoDuplicates,
       this.daysAboveThresholdThisYear,
       this.temperature,
-      "New Record" // fix this
-    );
+      "New Record"
+    ); // fix this
   }
 
   @computed
@@ -107,8 +99,7 @@ export default class appStore {
       results.push({
         year: format(d[0], "YYYY"),
         "days above": Number(d[1]),
-        mean: Math.round(jStat.quantiles(values, [0.5])),
-        color: ""
+        mean: Math.round(jStat.quantiles(values, [0.5]))
       });
     });
 
@@ -141,7 +132,7 @@ export default class appStore {
     return axios
       .post(`${this.protocol}//data.rcc-acis.org/StnData`, params)
       .then(res => {
-        console.log(res.data.data);
+        // console.log(res.data.data);
         this.setObservedData(res.data.data);
         this.setIsLoading(false);
       })
@@ -152,6 +143,7 @@ export default class appStore {
 
   // Projection 2040-2069 ----------------------------------------------------------
   @observable projectedData2040 = [];
+
   @action
   setProjectedData2040 = d => {
     this.projectedData2040 = d;
@@ -160,17 +152,17 @@ export default class appStore {
   @action
   loadProjection2040() {
     this.setIsPLoading(true);
-
     // Subtract 5 months from the current month to get data for the spline function
-    const month = format(subMonths(new Date(), 5), "MM");
-    console.log(month);
+    const month = format(new Date(), "MM");
 
     const params = {
       loc: [this.station.lon, this.station.lat],
-      sdate: [2040, month],
+      sdate: [2040, 1],
       edate: [2069, month],
       grid: "loca:wMean:rcp45",
       elems: [
+        { name: "maxt", interval: [0, 1], reduce: `cnt_gt_80` },
+        { name: "maxt", interval: [0, 1], reduce: `cnt_gt_85` },
         { name: "maxt", interval: [0, 1], reduce: `cnt_gt_90` },
         { name: "maxt", interval: [0, 1], reduce: `cnt_gt_95` },
         { name: "maxt", interval: [0, 1], reduce: `cnt_gt_100` }
@@ -182,8 +174,8 @@ export default class appStore {
     return axios
       .post(`${this.protocol}//grid2.rcc-acis.org/GridData`, params)
       .then(res => {
-        console.log(res.data.data);
-        // this.setProjectedData2040(res.data.data);
+        // console.log(res.data.data);
+        this.setProjectedData2040(res.data.data);
         this.setIsPLoading(false);
       })
       .catch(err => {
@@ -192,20 +184,118 @@ export default class appStore {
   }
 
   @computed
-  get daysAbove2040() {
-    if (this.observedData) {
-      const values = this.observedData.slice(-1)[0];
-      if (values) {
-        const x = [90, 95, 100];
-        console.log(x);
-        const y = values.slice(1, 7).map(n => Number(n));
-        console.log(y);
-        const results = spline(this.temperature, x, y);
-        console.log(
-          `temp: ${this.temperature}, days above: ${Math.round(results)}`
-        );
-        return Math.round(results);
+  get projected2040YearlyGrouped() {
+    const month = format(new Date(), "MM");
+    const monthDiff = Math.abs(
+      differenceInCalendarMonths("2040-01", `2040-${month}`)
+    );
+    let results = [];
+    if (this.projectedData2040.length !== 0) {
+      const initial = this.projectedData2040.slice(0, monthDiff + 1);
+
+      const firstYear = transposeReduce(initial);
+      results.push(firstYear);
+
+      const middle = this.projectedData2040.slice(
+        monthDiff + 1,
+        -(monthDiff + 2)
+      );
+      let tempArray = [];
+      for (let i = 0; i < middle.length; i += 12) {
+        tempArray = middle.slice(i, i + 12);
+        const middleYear = transposeReduce(tempArray);
+        results.push(middleYear);
       }
+
+      const end = this.projectedData2040.slice(-(monthDiff + 2));
+      const lastYear = transposeReduce(end);
+      results.push(lastYear);
+      return results;
     }
+    return results;
+  }
+
+  @computed
+  get yearlyDaysAboveP2040() {
+    let results = [];
+    const x = [80, 85, 90, 95, 100];
+    if (this.projected2040YearlyGrouped.length !== 0) {
+      this.projected2040YearlyGrouped.forEach(year => {
+        const y = year.slice(1, 6);
+        const daysAbove = spline(this.temperature, x, y);
+        results.push([year[0], Math.round(Math.abs(daysAbove))]);
+        // console.log([year[0], Math.round(Math.abs(daysAbove))]);
+      });
+      return results;
+    }
+    return results;
+  }
+
+  @computed
+  get projected2040Days() {
+    if (this.yearlyDaysAboveP2040.length !== 0) {
+      return this.yearlyDaysAboveP2040.map(year => year[1]);
+    }
+    return [];
+  }
+
+  @computed
+  get projected2040Quantiles() {
+    if (this.projected2040Days.length !== 0) {
+      const q = jStat.quantiles(this.projected2040Days, [
+        0,
+        0.25,
+        0.5,
+        0.75,
+        1
+      ]);
+      return q.map(n => Math.round(n));
+    }
+    return [];
+  }
+
+  @computed
+  get projected2040QuantilesNoDuplicates() {
+    if (this.projected2040Days.length !== 0) {
+      return reevaluateQuantiles(this.projected2040Quantiles);
+    }
+    return [];
+  }
+
+  @computed
+  get projected2040Index() {
+    if (this.projected2040Days.length !== 0) {
+      return index(
+        this.daysAboveThresholdThisYear,
+        this.projected2040QuantilesNoDuplicates
+      );
+    }
+    return [];
+  }
+
+  @computed
+  get projected2040ArcData() {
+    if (this.projected2040Days.length !== 0) {
+      return arcData(
+        this.projected2040QuantilesNoDuplicates,
+        this.daysAboveThresholdThisYear,
+        this.temperature,
+        "Not Expected"
+      ); // fix this
+    }
+    return [];
+  }
+
+  @computed
+  get projected2040DataGraph() {
+    let results = [];
+    this.projected2040Days.forEach(d => {
+      results.push({
+        year: format(d[0], "YYYY"),
+        "days above": Number(d[1]),
+        mean: Math.round(jStat.quantiles(this.projected2040Days, [0.5]))
+      });
+    });
+    return results;
   }
 }

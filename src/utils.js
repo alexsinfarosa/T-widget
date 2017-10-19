@@ -357,3 +357,14 @@ export const arcData = (q, days, temp, darkArcLabel) => {
     ];
   }
 };
+
+export const transposeReduce = d => {
+  const date = d[d.length - 1][0];
+  const arrWithNoDate = d.map(arr => arr.slice(1, arr.length));
+  const aboveDaysAtSameTemp = arrWithNoDate[0].map((col, i) =>
+    arrWithNoDate.map(row => row[i])
+  );
+  let results = aboveDaysAtSameTemp.map(arr => arr.reduce((a, b) => a + b, 0));
+  results.unshift(date);
+  return results;
+};

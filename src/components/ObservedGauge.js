@@ -18,7 +18,7 @@ const width = 600;
 
 @inject("store")
 @observer
-export default class ObservedGauge2 extends Component {
+export default class ObservedGauge extends Component {
   render() {
     const { observedIndex, observedArcData, isGraph } = this.props.store.app;
 
