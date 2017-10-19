@@ -1,3 +1,7 @@
+import getMonth from "date-fns/get_month";
+import isAfter from "date-fns/is_after";
+import getYear from "date-fns/get_year";
+
 export const reevaluateQuantiles = q => {
   console.log(`original: [${q}]`);
   const _min = q[0];
@@ -367,4 +371,11 @@ export const transposeReduce = d => {
   let results = aboveDaysAtSameTemp.map(arr => arr.reduce((a, b) => a + b, 0));
   results.unshift(date);
   return results;
+};
+
+export const filterMonths = d => {
+  const month = getMonth(new Date()); // 10
+  const year = getYear(d[0]); // 2040
+  console.log(d, month, year);
+  return isAfter(d[0], `${year}-${month}`);
 };

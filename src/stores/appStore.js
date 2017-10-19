@@ -6,7 +6,13 @@ import differenceInCalendarMonths from "date-fns/difference_in_calendar_months";
 import axios from "axios";
 import spline from "cubic-spline";
 import { jStat } from "jStat";
-import { reevaluateQuantiles, index, arcData, transposeReduce } from "utils";
+import {
+  reevaluateQuantiles,
+  index,
+  arcData,
+  transposeReduce,
+  filterMonths
+} from "utils";
 
 export default class appStore {
   constructor(fetch) {
@@ -153,7 +159,7 @@ export default class appStore {
   loadProjection2040() {
     this.setIsPLoading(true);
     // Subtract 5 months from the current month to get data for the spline function
-    const month = format(new Date(), "MM");
+    const month = Number(format(new Date(), "MM"));
 
     const params = {
       loc: [this.station.lon, this.station.lat],
@@ -174,7 +180,7 @@ export default class appStore {
     return axios
       .post(`${this.protocol}//grid2.rcc-acis.org/GridData`, params)
       .then(res => {
-        // console.log(res.data.data);
+        console.log(res.data.data);
         this.setProjectedData2040(res.data.data);
         this.setIsPLoading(false);
       })
@@ -189,8 +195,13 @@ export default class appStore {
     const monthDiff = Math.abs(
       differenceInCalendarMonths("2040-01", `2040-${month}`)
     );
+
     let results = [];
     if (this.projectedData2040.length !== 0) {
+      const filtered = this.projectedData2040.filter(arr =>
+        filterMonths(arr[0])
+      );
+      console.log(filtered.slice());
       const initial = this.projectedData2040.slice(0, monthDiff + 1);
 
       const firstYear = transposeReduce(initial);

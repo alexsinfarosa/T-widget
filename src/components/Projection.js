@@ -29,7 +29,7 @@ export default class Prohection extends Component {
       projected2040YearlyGrouped
     } = this.props.store.app;
 
-    projected2040YearlyGrouped.map(a => console.log(a.slice()));
+    // projected2040YearlyGrouped.map(a => console.log(a.slice()));
 
     const cell = projected2040ArcData.map((arc, index) => {
       return <Cell key={index} fill={arcColoring(arc.name)} />;
