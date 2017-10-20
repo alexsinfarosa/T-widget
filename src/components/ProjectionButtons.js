@@ -6,7 +6,16 @@ import { Radio } from "antd";
 @observer
 class ProjectionButtons extends Component {
   onChange = e => {
-    this.props.store.app.setProjection(e.target.value);
+    this.props.store.app.setSelectedProjection(e.target.value);
+    if (e.target.value === "Projection 2040-2069") {
+      this.props.store.app.setProjection(
+        this.props.store.app.projectedData2040
+      );
+    } else {
+      this.props.store.app.setProjection(
+        this.props.store.app.projectedData2070
+      );
+    }
   };
 
   render() {

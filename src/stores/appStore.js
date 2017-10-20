@@ -22,7 +22,7 @@ export default class appStore {
   @observable isGraph = false;
   @action setIsGraph = d => (this.isGraph = !this.isGraph);
   @observable selectedProjection = "Projection 2040-2069";
-  @action setProjection = d => (this.selectedProjection = d);
+  @action setSelectedProjection = d => (this.selectedProjection = d);
 
   // Stations -----------------------------------------------------------------------
   @observable
@@ -185,6 +185,7 @@ export default class appStore {
       .then(res => {
         // console.log(res.data.data);
         this.setProjectedData2040(res.data.data);
+        this.setProjection(res.data.data);
         this.setIsPLoading(false);
       })
       .catch(err => {
@@ -192,17 +193,74 @@ export default class appStore {
       });
   }
 
+  // Projection 2070-2099 ----------------------------------------------------------
+  @observable projectedData2070 = [];
+
+  @action
+  setProjectedData2070 = d => {
+    this.projectedData2070 = d;
+  };
+
+  @action
+  loadProjection2070() {
+    this.setIsPLoading(true);
+    // Subtract 5 months from the current month to get data for the spline function
+    const month = Number(format(new Date(), "MM"));
+
+    const params = {
+      loc: [this.station.lon, this.station.lat],
+      sdate: [2070, 1],
+      edate: [2099, month],
+      grid: "loca:wMean:rcp45",
+      elems: [
+        { name: "maxt", interval: [0, 1], reduce: `cnt_gt_80` },
+        { name: "maxt", interval: [0, 1], reduce: `cnt_gt_85` },
+        { name: "maxt", interval: [0, 1], reduce: `cnt_gt_90` },
+        { name: "maxt", interval: [0, 1], reduce: `cnt_gt_95` },
+        { name: "maxt", interval: [0, 1], reduce: `cnt_gt_100` }
+      ]
+    };
+
+    // console.log(params);
+
+    return axios
+      .post(`${this.protocol}//grid2.rcc-acis.org/GridData`, params)
+      .then(res => {
+        // console.log(res.data.data);
+        this.setProjectedData2070(res.data.data);
+        this.setIsPLoading(false);
+      })
+      .catch(err => {
+        console.log("Failed to load projection 2040-2069 ", err);
+      });
+  }
+
+  // Common projection's actions and computed properties
+  @observable projection = [];
+
+  @action
+  setProjection = d => {
+    this.projection = [];
+    this.projection = d;
+  };
+
   @computed
-  get projected2040YearlyGrouped() {
+  get projectedYearlyGrouped() {
     const month = format(new Date(), "MM");
-    // const year = d[0].slice(0, 4);
-    const monthDiff = Math.abs(
-      differenceInCalendarMonths("2040-01", `2040-${month}`)
+
+    let monthDiff;
+    if (this.selectedProjection === "Projection 2040-2069") {
+      monthDiff = Math.abs(
+        differenceInCalendarMonths("2040-01", `2040-${month}`)
+      );
+    }
+    monthDiff = Math.abs(
+      differenceInCalendarMonths("2070-01", `2070-${month}`)
     );
 
     let results = [];
-    if (this.projectedData2040.length !== 0) {
-      const filtered = this.projectedData2040.filter(
+    if (this.projection.length !== 0) {
+      const filtered = this.projection.filter(
         arr => !isAfter(arr[0], `${arr[0].slice(0, 4)}-${month}`)
       );
       // filtered.map(x => console.log(x.slice()));
@@ -228,11 +286,11 @@ export default class appStore {
   }
 
   @computed
-  get yearlyDaysAboveP2040() {
+  get yearlyDaysAboveP() {
     let results = [];
     const x = [80, 85, 90, 95, 100];
-    if (this.projected2040YearlyGrouped.length !== 0) {
-      this.projected2040YearlyGrouped.forEach(year => {
+    if (this.projectedYearlyGrouped.length !== 0) {
+      this.projectedYearlyGrouped.forEach(year => {
         const y = year.slice(1, 6);
         const daysAbove = spline(this.temperature, x, y);
         results.push([year[0], Math.round(Math.abs(daysAbove))]);
@@ -244,52 +302,46 @@ export default class appStore {
   }
 
   @computed
-  get projected2040Days() {
-    if (this.yearlyDaysAboveP2040.length !== 0) {
-      return this.yearlyDaysAboveP2040.map(year => year[1]);
+  get projectedDays() {
+    if (this.yearlyDaysAboveP.length !== 0) {
+      return this.yearlyDaysAboveP.map(year => year[1]);
     }
     return [];
   }
 
   @computed
-  get projected2040Quantiles() {
-    if (this.projected2040Days.length !== 0) {
-      const q = jStat.quantiles(this.projected2040Days, [
-        0,
-        0.25,
-        0.5,
-        0.75,
-        1
-      ]);
+  get projectedQuantiles() {
+    if (this.projectedDays.length !== 0) {
+      const q = jStat.quantiles(this.projectedDays, [0, 0.25, 0.5, 0.75, 1]);
       return q.map(n => Math.round(n));
     }
     return [];
   }
 
   @computed
-  get projected2040QuantilesNoDuplicates() {
-    if (this.projected2040Days.length !== 0) {
-      return reevaluateQuantiles(this.projected2040Quantiles);
+  get projectedQuantilesNoDuplicates() {
+    if (this.projectedDays.length !== 0) {
+      return reevaluateQuantiles(this.projectedQuantiles);
     }
     return [];
   }
 
   @computed
-  get projected2040Index() {
-    if (this.projected2040Days.length !== 0) {
+  get projectedIndex() {
+    if (this.projectedDays.length !== 0) {
       return index(
         this.daysAboveThresholdThisYear,
-        this.projected2040QuantilesNoDuplicates
+        this.projectedQuantilesNoDuplicates
       );
     }
     return [];
   }
 
   @computed
-  get projected2040ArcData() {
-    if (this.projected2040Days.length !== 0) {
+  get projectedArcData() {
+    if (this.projectedDays.length !== 0) {
       return arcData(
-        this.projected2040QuantilesNoDuplicates,
+        this.projectedQuantilesNoDuplicates,
         this.daysAboveThresholdThisYear,
         this.temperature,
         "Not Expected"
@@ -299,10 +351,10 @@ export default class appStore {
   }
 
   @computed
-  get projected2040DataGraph() {
-    const values = this.yearlyDaysAboveP2040.map(year => Number(year[1]));
+  get projectedDataGraph() {
+    const values = this.yearlyDaysAboveP.map(year => Number(year[1]));
     let results = [];
-    this.yearlyDaysAboveP2040.forEach(d => {
+    this.yearlyDaysAboveP.forEach(d => {
       results.push({
         year: format(d[0], "YYYY"),
         "days above": Number(d[1]),

@@ -1,6 +1,6 @@
 import React from "react";
 import { Sector } from "recharts";
-
+import { projectionHeaderMessage } from "utils";
 const InnerCircle = ({
   cx,
   cy,
@@ -53,7 +53,6 @@ const InnerCircle = ({
   //   oneDeg,
   //   theta
   // );
-
   return (
     <g>
       {payload.name === "Not Expected" && (
@@ -65,34 +64,61 @@ const InnerCircle = ({
           fill={fill}
           fontSize={13}
         >
-          {`A value as low as ${daysAbove} ${daysAbove === 1 ? 'day' : 'days'} is not expected to occur in ${type.slice(11, type.lenght)}`}
+          {`A value as low as ${daysAbove} ${daysAbove === 1
+            ? "day"
+            : "days"} is not expected to occur in ${type.slice(
+            11,
+            type.lenght
+          )}`}
         </text>
       )}
-      {type === 'Observed Data' ? (
-        <text
-        x={cx}
-        y={cy - 30}
-        dy={8}
-        textAnchor="middle"
-        fill={fill}
-        fontSize={11}
-      >
-      {type}
-      </text>
-      ) : (
-      <text
-        x={cx}
-        y={cy - 20}
-        dy={8}
-        textAnchor="middle"
-        fill={fill}
-        fontSize={11}
-      >
-          
-        <tspan x={cx} dy={'-1rem'}>Projection</tspan>
-        <tspan x={cx} dy={'1rem'}>{type.slice(11, type.lenght)}</tspan>
 
-      </text>)}
+      {type !== "Observed Data" &&
+        payload.name !== "Not Expected" && (
+          <text
+            x={cx}
+            y={cy - cy / 1.1}
+            dy={8}
+            textAnchor="middle"
+            fill={fill}
+            fontSize={13}
+          >
+            {`This year's ${daysAbove} ${daysAbove === 1
+              ? "day"
+              : "days"} would be considered ${projectionHeaderMessage(
+              payload.name
+            )} in ${type.slice(11, type.lenght)}`}
+          </text>
+        )}
+
+      {type === "Observed Data" ? (
+        <text
+          x={cx}
+          y={cy - 30}
+          dy={8}
+          textAnchor="middle"
+          fill={fill}
+          fontSize={11}
+        >
+          {type}
+        </text>
+      ) : (
+        <text
+          x={cx}
+          y={cy - 20}
+          dy={8}
+          textAnchor="middle"
+          fill={fill}
+          fontSize={11}
+        >
+          <tspan x={cx} dy={"-1rem"}>
+            Projection
+          </tspan>
+          <tspan x={cx} dy={"1rem"}>
+            {type.slice(11, type.lenght)}
+          </tspan>
+        </text>
+      )}
       <text
         x={cx}
         y={cy + 20}

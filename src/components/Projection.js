@@ -23,13 +23,13 @@ export default class Prohection extends Component {
     const {
       isGraph,
       selectedProjection,
-      projected2040Quantiles,
-      projected2040Index,
-      projected2040ArcData,
-      projected2040DataGraph
+      projectedQuantiles,
+      projectedIndex,
+      projectedArcData,
+      projectedDataGraph
     } = this.props.store.app;
 
-    const cell = projected2040ArcData.map((arc, index) => {
+    const cell = projectedArcData.map((arc, index) => {
       return <Cell key={index} fill={arcColoring(arc.name)} />;
     });
 
@@ -37,11 +37,11 @@ export default class Prohection extends Component {
       <Box>
         <PieChart width={width} height={height}>
           <Pie
-            activeIndex={projected2040Index}
+            activeIndex={projectedIndex}
             activeShape={<InnerCircle type={selectedProjection} />}
             startAngle={90 + 144}
             endAngle={-126}
-            data={projected2040ArcData}
+            data={projectedArcData}
             cx={width / 2}
             cy={height / 2}
             labelLine={false}
@@ -57,10 +57,10 @@ export default class Prohection extends Component {
           <TimeSeries
             width={width}
             height={height}
-            index={projected2040Index}
-            quantiles={projected2040Quantiles}
-            arcData={projected2040ArcData}
-            graphData={projected2040DataGraph}
+            index={projectedIndex}
+            quantiles={projectedQuantiles}
+            arcData={projectedArcData}
+            graphData={projectedDataGraph}
           />
         )}
       </Box>

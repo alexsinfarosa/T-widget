@@ -7,13 +7,18 @@ import { Slider } from "antd";
 @observer
 class TempSlider extends Component {
   onChange = e => {
-    // const { selectedProjection } = this.props.store.app;
+    const { selectedProjection } = this.props.store.app;
     this.props.store.app.setTemperature(e);
     this.props.store.app.loadObservedData();
-    // if (selectedProjection === "projection2040") {
-    //   this.props.store.app.loadProjection2040();
-    // }
-    // this.props.store.app.loadProjection2070();
+    if (selectedProjection === "Projection 2040-2069") {
+      this.props.store.app.setProjection(
+        this.props.store.app.projectedData2040
+      );
+    } else {
+      this.props.store.app.setProjection(
+        this.props.store.app.projectedData2070
+      );
+    }
   };
 
   render() {

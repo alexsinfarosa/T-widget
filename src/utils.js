@@ -127,6 +127,18 @@ export const arcColoring = name => {
   if (name === "New Record" || name === "Not Expected") return "#292F36";
 };
 
+export const projectionHeaderMessage = name => {
+  if (name === "Min") return "the minimum value";
+  if (name === "Below") return "below normal";
+  if (name === "25%") return "the 25% percentile";
+  if (name === "Slightly Below") return "slightly below the normal";
+  if (name === "Mean") return "the mean value";
+  if (name === "Slightly Above") return "slightly above the normal";
+  if (name === "75%") return "the 75% percentile";
+  if (name === "Above") return "above the normal";
+  if (name === "Max") return "the maximum value";
+};
+
 export const arcData = (q, days, temp, darkArcLabel) => {
   if (q.length === 5) {
     return [
