@@ -1,7 +1,3 @@
-import format from "date-fns/format";
-import isAfter from "date-fns/is_after";
-import getYear from "date-fns/get_year";
-
 export const reevaluateQuantiles = q => {
   console.log(`original: [${q}]`);
   const _min = q[0];
@@ -119,15 +115,15 @@ export const index = (daysAbovethreshold, quantiles) => {
 };
 
 export const arcColoring = name => {
-  if (name === "Min") return "#073B3A";
+  if (name === "Min") return "#565656";
   if (name === "Below") return "#0088FE";
-  if (name === "25%") return "#073B3A";
+  if (name === "25%") return "#565656";
   if (name === "Slightly Below") return "#7FB069";
-  if (name === "Mean") return "#073B3A";
+  if (name === "Mean") return "#565656";
   if (name === "Slightly Above") return "#FFBB28";
-  if (name === "75%") return "#073B3A";
+  if (name === "75%") return "#565656";
   if (name === "Above") return "#E63B2E";
-  if (name === "Max") return "#073B3A";
+  if (name === "Max") return "#565656";
   if (name === "New Record" || name === "Not Expected") return "#292F36";
 };
 
@@ -206,7 +202,7 @@ export const arcData = (q, days, temp, darkArcLabel) => {
         value: 1,
         startArcQuantile: q[4],
         endArcQuantile: q[0],
-        d: days,
+        daysAbove: days,
         t: temp
       }
     ];
@@ -271,7 +267,7 @@ export const arcData = (q, days, temp, darkArcLabel) => {
         value: 1,
         startArcQuantile: q[3],
         endArcQuantile: q[0],
-        d: days,
+        daysAbove: days,
         t: temp
       }
     ];
@@ -320,7 +316,7 @@ export const arcData = (q, days, temp, darkArcLabel) => {
         value: 1,
         startArcQuantile: q[2],
         endArcQuantile: q[0],
-        d: days,
+        daysAbove: days,
         t: temp
       }
     ];
@@ -355,7 +351,7 @@ export const arcData = (q, days, temp, darkArcLabel) => {
         value: 1,
         startArcQuantile: q[2],
         endArcQuantile: q[0],
-        d: days,
+        daysAbove: days,
         t: temp
       }
     ];

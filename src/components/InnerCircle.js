@@ -18,15 +18,14 @@ const InnerCircle = ({
 
   const sin = Math.sin(-RADIAN * midAngle);
   const cos = Math.cos(-RADIAN * midAngle);
-  const sx = cx + (outerRadius + 10) * cos;
-  const sy = cy + (outerRadius + 10) * sin;
-  const mx = cx + (outerRadius + 20) * cos;
-  const my = cy + (outerRadius + 20) * sin;
-  const ex = mx + (cos >= 0 ? 1 : -1) * 12;
+  const sx = cx + (outerRadius + 15) * cos;
+  const sy = cy + (outerRadius + 15) * sin;
+  const mx = cx + (outerRadius + 25) * cos;
+  const my = cy + (outerRadius + 25) * sin;
+  const ex = mx + (cos >= 0 ? 1 : -1) * 14;
   const ey = my;
   const textAnchor = cos >= 0 ? "start" : "end";
 
-  console.log(payload);
   const { startArcQuantile, endArcQuantile, daysAbove } = payload;
 
   let anglesDiff = endAngle - startAngle;
@@ -45,28 +44,55 @@ const InnerCircle = ({
   let theta = (endArcQuantile - daysAbove) * oneDeg;
   if (theta < 0) theta = theta * -1;
 
-  console.log(
-    startArcQuantile,
-    endArcQuantile,
-    daysAbove,
-    anglesDiff,
-    quantilesDiff,
-    oneDeg,
-    theta
-  );
+  // console.log(
+  //   startArcQuantile,
+  //   endArcQuantile,
+  //   daysAbove,
+  //   anglesDiff,
+  //   quantilesDiff,
+  //   oneDeg,
+  //   theta
+  // );
 
   return (
     <g>
+      {payload.name === "Not Expected" && (
+        <text
+          x={cx}
+          y={cy - cy / 1.1}
+          dy={8}
+          textAnchor="middle"
+          fill={fill}
+          fontSize={13}
+        >
+          {`A value as low as ${daysAbove} ${daysAbove === 1 ? 'day' : 'days'} is not expected to occur in ${type.slice(11, type.lenght)}`}
+        </text>
+      )}
+      {type === 'Observed Data' ? (
+        <text
+        x={cx}
+        y={cy - 30}
+        dy={8}
+        textAnchor="middle"
+        fill={fill}
+        fontSize={11}
+      >
+      {type}
+      </text>
+      ) : (
       <text
         x={cx}
         y={cy - 20}
         dy={8}
         textAnchor="middle"
         fill={fill}
-        fontSize={12}
+        fontSize={11}
       >
-        {type}
-      </text>
+          
+        <tspan x={cx} dy={'-1rem'}>Projection</tspan>
+        <tspan x={cx} dy={'1rem'}>{type.slice(11, type.lenght)}</tspan>
+
+      </text>)}
       <text
         x={cx}
         y={cy + 20}
@@ -83,7 +109,7 @@ const InnerCircle = ({
         x1={cx}
         y1={cy + 15}
         x2={cx}
-        y2={innerRadius + 35}
+        y2={innerRadius + 90}
         transform={`rotate(${-endAngle + 90 - theta} ${cx} ${cy})`}
       />
       <circle cx={cx} cy={cy} r={4} />
@@ -112,12 +138,34 @@ const InnerCircle = ({
         fill="none"
       />
       <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
-      <text
-        x={ex + (cos >= 0 ? 1 : -1) * 12}
-        y={ey}
-        textAnchor={textAnchor}
-        fill={fill}
-      >{`${payload.daysAbove} days > ${payload.t} ˚F This Year`}</text>
+      {payload.name === "New Record" || payload.name === "Not Expected" ? (
+        <text
+          x={ex + (cos >= 0 ? 1 : -1) * 12}
+          y={ey}
+          dy={0}
+          textAnchor={textAnchor}
+          fill={fill}
+        >
+          {payload.name}
+        </text>
+      ) : (
+        <text
+          x={ex + (cos >= 0 ? 1 : -1) * 12}
+          y={ey}
+          dy={0}
+          textAnchor={textAnchor}
+          fill={fill}
+        >
+          <tspan x={ex + (cos >= 0 ? 1 : -1) * 12}>
+            {" "}
+            {`${payload.daysAbove} days > ${payload.t} ˚F`}{" "}
+          </tspan>
+          <tspan x={ex + (cos >= 0 ? 1 : -1) * 12} dy="1.2em">
+            {" "}
+            This Year{" "}
+          </tspan>
+        </text>
+      )}
     </g>
   );
 };

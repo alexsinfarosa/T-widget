@@ -13,22 +13,30 @@ import TimeSeries from "./TimeSeries";
 // styled components
 import { Box } from "styles";
 
-const height = 350;
-const width = 600;
+let height = 450;
+let width = 600;
 
 @inject("store")
 @observer
 export default class ObservedGauge extends Component {
   render() {
-    const { observedIndex, observedArcData, isGraph } = this.props.store.app;
+    const {
+      observedIndex,
+      observedQuantiles,
+      observedArcData,
+      isGraph,
+      observedDataGraph
+    } = this.props.store.app;
 
     const cell = observedArcData.map((arc, index) => {
       return <Cell key={index} fill={arcColoring(arc.name)} />;
     });
 
+    // if (isGraph) width = width / 1.2;
+
     return (
       <Box>
-        <PieChart width={width} height={height} style={{ flex: 1 }}>
+        <PieChart width={width} height={height}>
           <Pie
             activeIndex={observedIndex}
             activeShape={<InnerCircle type="Observed Data" />}
@@ -45,7 +53,16 @@ export default class ObservedGauge extends Component {
             {cell}
           </Pie>
         </PieChart>
-        {isGraph && <TimeSeries width={width} height={height} />}
+        {isGraph && (
+          <TimeSeries
+            width={width}
+            height={height}
+            index={observedIndex}
+            quantiles={observedQuantiles}
+            arcData={observedArcData}
+            graphData={observedDataGraph}
+          />
+        )}
       </Box>
     );
   }

@@ -1,20 +1,13 @@
 import { observable, action, computed } from "mobx";
 import { stations } from "stations";
 import format from "date-fns/format";
-import subMonths from "date-fns/sub_months";
 import differenceInCalendarMonths from "date-fns/difference_in_calendar_months";
 import axios from "axios";
 import spline from "cubic-spline";
 import { jStat } from "jStat";
 import isAfter from "date-fns/is_after";
 
-import {
-  reevaluateQuantiles,
-  index,
-  arcData,
-  transposeReduce,
-  filterMonths
-} from "utils";
+import { reevaluateQuantiles, index, arcData, transposeReduce } from "utils";
 
 export default class appStore {
   constructor(fetch) {
@@ -56,12 +49,18 @@ export default class appStore {
 
   @computed
   get daysAboveThresholdThisYear() {
-    return this.observedData.slice(-1).map(arr => Number(arr[1]))[0];
+    if (this.observedData.length > 0) {
+      return this.observedData.slice(-1).map(arr => Number(arr[1]))[0];
+    }
+    return [];
   }
 
   @computed
   get observedDays() {
-    return this.observedData.map(arr => Number(arr[1]));
+    if (this.observedData.length > 0) {
+      return this.observedData.map(arr => Number(arr[1]));
+    }
+    return [];
   }
 
   @computed
@@ -70,6 +69,7 @@ export default class appStore {
       const q = jStat.quantiles(this.observedDays, [0, 0.25, 0.5, 0.75, 1]);
       return q.map(n => Math.round(n));
     }
+    return [];
   }
 
   @computed
@@ -77,6 +77,7 @@ export default class appStore {
     if (this.observedDays.length !== 0) {
       return reevaluateQuantiles(this.observedQuantiles);
     }
+    return [];
   }
 
   @computed
@@ -87,6 +88,7 @@ export default class appStore {
         this.observedQuantilesNoDuplicates
       );
     }
+    return [];
   }
 
   @computed
@@ -110,7 +112,6 @@ export default class appStore {
         mean: Math.round(jStat.quantiles(values, [0.5]))
       });
     });
-
     return results;
   }
 
@@ -182,7 +183,7 @@ export default class appStore {
     return axios
       .post(`${this.protocol}//grid2.rcc-acis.org/GridData`, params)
       .then(res => {
-        console.log(res.data.data);
+        // console.log(res.data.data);
         this.setProjectedData2040(res.data.data);
         this.setIsPLoading(false);
       })
@@ -299,12 +300,13 @@ export default class appStore {
 
   @computed
   get projected2040DataGraph() {
+    const values = this.yearlyDaysAboveP2040.map(year => Number(year[1]));
     let results = [];
-    this.projected2040Days.forEach(d => {
+    this.yearlyDaysAboveP2040.forEach(d => {
       results.push({
         year: format(d[0], "YYYY"),
         "days above": Number(d[1]),
-        mean: Math.round(jStat.quantiles(this.projected2040Days, [0.5]))
+        mean: Math.round(jStat.quantiles(values, [0.5]))
       });
     });
     return results;

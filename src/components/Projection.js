@@ -13,7 +13,7 @@ import TimeSeries from "./TimeSeries";
 // styled components
 import { Box } from "styles";
 
-const height = 350;
+const height = 450;
 const width = 600;
 
 @inject("store")
@@ -23,13 +23,11 @@ export default class Prohection extends Component {
     const {
       isGraph,
       selectedProjection,
+      projected2040Quantiles,
       projected2040Index,
       projected2040ArcData,
-      yearlyDaysAboveP2040,
-      projected2040YearlyGrouped
+      projected2040DataGraph
     } = this.props.store.app;
-
-    // projected2040YearlyGrouped.map(a => console.log(a.slice()));
 
     const cell = projected2040ArcData.map((arc, index) => {
       return <Cell key={index} fill={arcColoring(arc.name)} />;
@@ -55,7 +53,16 @@ export default class Prohection extends Component {
           </Pie>
         </PieChart>
 
-        {isGraph && <TimeSeries width={width} height={height} />}
+        {isGraph && (
+          <TimeSeries
+            width={width}
+            height={height}
+            index={projected2040Index}
+            quantiles={projected2040Quantiles}
+            arcData={projected2040ArcData}
+            graphData={projected2040DataGraph}
+          />
+        )}
       </Box>
     );
   }

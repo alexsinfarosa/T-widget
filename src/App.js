@@ -12,7 +12,7 @@ import Projection from "components/Projection";
 import ProjectionButtons from "components/ProjectionButtons";
 
 // Styled components
-import { Page } from "styles";
+import { Page, VBox } from "styles";
 
 @inject("store")
 @observer
@@ -35,10 +35,16 @@ class App extends Component {
         </Button>
 
         <br />
-        {!isLoading ? <ObservedGauge /> : <Spin />}
-        <br />
-        {!isLoading ? <Projection /> : <Spin />}
-        {!isLoading ? <ProjectionButtons /> : <Spin />}
+        {!isLoading ? (
+          <VBox>
+            <ObservedGauge />
+            <br />
+            <Projection />
+            <ProjectionButtons />
+          </VBox>
+        ) : (
+          <Spin />
+        )}
       </Page>
     );
   }
