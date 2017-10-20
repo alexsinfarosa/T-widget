@@ -18,7 +18,7 @@ import { Page } from "styles";
 @observer
 class App extends Component {
   render() {
-    const { isLoading, isGraph, isPLoading } = this.props.store.app;
+    const { isLoading, isGraph } = this.props.store.app;
     return (
       <Page>
         <StationsMenu />
@@ -37,8 +37,8 @@ class App extends Component {
         <br />
         {!isLoading ? <ObservedGauge /> : <Spin />}
         <br />
-        {!isPLoading ? <Projection /> : <Spin />}
-        {!isPLoading ? <ProjectionButtons /> : <Spin />}
+        {!isLoading ? <Projection /> : <Spin />}
+        {!isLoading ? <ProjectionButtons /> : <Spin />}
       </Page>
     );
   }

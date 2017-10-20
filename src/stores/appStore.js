@@ -6,6 +6,8 @@ import differenceInCalendarMonths from "date-fns/difference_in_calendar_months";
 import axios from "axios";
 import spline from "cubic-spline";
 import { jStat } from "jStat";
+import isAfter from "date-fns/is_after";
+
 import {
   reevaluateQuantiles,
   index,
@@ -192,25 +194,23 @@ export default class appStore {
   @computed
   get projected2040YearlyGrouped() {
     const month = format(new Date(), "MM");
+    // const year = d[0].slice(0, 4);
     const monthDiff = Math.abs(
       differenceInCalendarMonths("2040-01", `2040-${month}`)
     );
 
     let results = [];
     if (this.projectedData2040.length !== 0) {
-      const filtered = this.projectedData2040.filter(arr =>
-        filterMonths(arr[0])
+      const filtered = this.projectedData2040.filter(
+        arr => !isAfter(arr[0], `${arr[0].slice(0, 4)}-${month}`)
       );
-      console.log(filtered.slice());
-      const initial = this.projectedData2040.slice(0, monthDiff + 1);
+      // filtered.map(x => console.log(x.slice()));
+      const initial = filtered.slice(0, monthDiff + 1);
 
       const firstYear = transposeReduce(initial);
       results.push(firstYear);
 
-      const middle = this.projectedData2040.slice(
-        monthDiff + 1,
-        -(monthDiff + 2)
-      );
+      const middle = filtered.slice(monthDiff + 1, -(monthDiff + 2));
       let tempArray = [];
       for (let i = 0; i < middle.length; i += 12) {
         tempArray = middle.slice(i, i + 12);
@@ -218,7 +218,7 @@ export default class appStore {
         results.push(middleYear);
       }
 
-      const end = this.projectedData2040.slice(-(monthDiff + 2));
+      const end = filtered.slice(-(monthDiff + 2));
       const lastYear = transposeReduce(end);
       results.push(lastYear);
       return results;

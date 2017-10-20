@@ -13,7 +13,7 @@ import TimeSeries from "./TimeSeries";
 // styled components
 import { Box } from "styles";
 
-const height = 400;
+const height = 350;
 const width = 600;
 
 @inject("store")
@@ -39,8 +39,8 @@ export default class ObservedGauge extends Component {
             cy={height / 2}
             labelLine={false}
             label={PieLabels}
-            innerRadius={100}
-            outerRadius={160}
+            innerRadius={80}
+            outerRadius={140}
           >
             {cell}
           </Pie>

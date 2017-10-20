@@ -26,6 +26,7 @@ const InnerCircle = ({
   const ey = my;
   const textAnchor = cos >= 0 ? "start" : "end";
 
+  console.log(payload);
   const { startArcQuantile, endArcQuantile, daysAbove } = payload;
 
   let anglesDiff = endAngle - startAngle;
@@ -44,15 +45,15 @@ const InnerCircle = ({
   let theta = (endArcQuantile - daysAbove) * oneDeg;
   if (theta < 0) theta = theta * -1;
 
-  // console.log(
-  //   startArcQuantile,
-  //   endArcQuantile,
-  //   daysAbove,
-  //   anglesDiff,
-  //   quantilesDiff,
-  //   oneDeg,
-  //   theta
-  // );
+  console.log(
+    startArcQuantile,
+    endArcQuantile,
+    daysAbove,
+    anglesDiff,
+    quantilesDiff,
+    oneDeg,
+    theta
+  );
 
   return (
     <g>
@@ -82,7 +83,7 @@ const InnerCircle = ({
         x1={cx}
         y1={cy + 15}
         x2={cx}
-        y2={innerRadius + 25}
+        y2={innerRadius + 35}
         transform={`rotate(${-endAngle + 90 - theta} ${cx} ${cy})`}
       />
       <circle cx={cx} cy={cy} r={4} />
