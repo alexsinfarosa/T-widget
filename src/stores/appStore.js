@@ -248,36 +248,27 @@ export default class appStore {
   get projectedYearlyGrouped() {
     const month = format(new Date(), "MM");
 
-    let monthDiff;
-    if (this.selectedProjection === "Projection 2040-2069") {
-      monthDiff = Math.abs(
-        differenceInCalendarMonths("2040-01", `2040-${month}`)
-      );
-    }
-    monthDiff = Math.abs(
-      differenceInCalendarMonths("2070-01", `2070-${month}`)
-    );
-
     let results = [];
     if (this.projection.length !== 0) {
       const filtered = this.projection.filter(
         arr => !isAfter(arr[0], `${arr[0].slice(0, 4)}-${month}`)
       );
-      // filtered.map(x => console.log(x.slice()));
-      const initial = filtered.slice(0, monthDiff + 1);
+      const initial = filtered.slice(0, month);
 
       const firstYear = transposeReduce(initial);
       results.push(firstYear);
 
-      const middle = filtered.slice(monthDiff + 1, -(monthDiff + 2));
+      const middle = filtered.slice(month, -(month + 1));
+      // middle.map(x => console.log(x.slice()));
       let tempArray = [];
-      for (let i = 0; i < middle.length; i += 12) {
-        tempArray = middle.slice(i, i + 12);
+      for (let i = 0; i < middle.length; i += month) {
+        tempArray = middle.slice(i, i + month);
+        console.log(tempArray.slice());
         const middleYear = transposeReduce(tempArray);
         results.push(middleYear);
       }
 
-      const end = filtered.slice(-(monthDiff + 2));
+      const end = filtered.slice(-(month + 1));
       const lastYear = transposeReduce(end);
       results.push(lastYear);
       return results;
