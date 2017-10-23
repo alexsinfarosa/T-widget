@@ -16,7 +16,7 @@ export const Box = styled.div`
   flex-direction: row;
   justify-content: center
   align-items: center;
-  border: 1px solid #d9d9d9;
+  border: ${props => (props.bordered ? "1px solid #d9d9d9" : "none")};
   border-radius: 5px;
   flex: 1;
 `;
@@ -26,5 +26,4 @@ export const VBox = styled.div`
   flex-direction: column;
   justify-content: center
   align-items: center;
-  flex: 1;
 `;

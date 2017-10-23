@@ -1,3 +1,7 @@
+export const hasDuplicates = array => {
+  return new Set(array).size !== array.length;
+};
+
 export const reevaluateQuantiles = q => {
   console.log(`original: [${q}]`);
   const _min = q[0];
@@ -36,7 +40,7 @@ export const index = (daysAbovethreshold, quantiles) => {
   const q = quantiles; // ex: [3,11,23]
 
   if (q.length === 5) {
-    console.log(`d: ${d}, Qlength: 5`);
+    console.log(`d: ${d}, q = [min, 25, 50, 75, max]: [${q}]`);
     // is the min
     if (d === q[0]) return 0;
     // is below
@@ -60,7 +64,9 @@ export const index = (daysAbovethreshold, quantiles) => {
   }
 
   if (q.length === 4) {
-    console.log(`d: ${d}, Qlength: 4`);
+    console.log(
+      `d: ${d}, q = [.25, .5, .75, 1]: [${q[0]}, ${q[1]}, ${q[2]}, ${q[3]}]`
+    );
     // is the 25%
     if (d === q[0]) return 0;
     // is slightly below
@@ -80,7 +86,7 @@ export const index = (daysAbovethreshold, quantiles) => {
   }
 
   if (q.length === 3) {
-    console.log(`d: ${d}, Qlength: 3`);
+    console.log(`d: ${d}, q = [.5, .75, 1]: [${q[0]}, ${q[1]}, ${q[2]}]`);
     // is the Mean
     if (d === q[0]) return 0;
     // is slightly above
@@ -96,7 +102,7 @@ export const index = (daysAbovethreshold, quantiles) => {
   }
 
   if (q.length === 2) {
-    console.log(`d: ${d}, Qlength: 2`);
+    console.log(`d: ${d}, q = [.75, 1]: [${q[0]}, ${q[1]}]`);
     // is the 75%
     if (d === q[0]) return 0;
     // is above
@@ -105,13 +111,15 @@ export const index = (daysAbovethreshold, quantiles) => {
     if (d < q[0]) return 2;
   }
 
-  console.log(`d: ${d}, Qlength: 1`);
-  // is the Mean
-  if (d === q[0]) return 0;
-  // is slightly above
-  if (d > q[0]) return 1;
-  // is slightly below
-  if (d < q[0]) return 2;
+  if (q.length === 1) {
+    console.log(`d: ${d}, q = [1]: [${q[0]}]`);
+    // is the Mean
+    if (d === q[0]) return 0;
+    // is slightly above
+    if (d > q[0]) return 1;
+    // is slightly below
+    if (d < q[0]) return 2;
+  }
 };
 
 export const arcColoring = name => {
@@ -378,5 +386,6 @@ export const transposeReduce = d => {
   );
   let results = aboveDaysAtSameTemp.map(arr => arr.reduce((a, b) => a + b, 0));
   results.unshift(date);
+  // results.map(x => console.log(x));
   return results;
 };

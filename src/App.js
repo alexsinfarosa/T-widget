@@ -18,7 +18,7 @@ import { Page, VBox } from "styles";
 @observer
 class App extends Component {
   render() {
-    const { isLoading, isGraph } = this.props.store.app;
+    const { isLoading, isGraph, isPLoading } = this.props.store.app;
     return (
       <Page>
         <StationsMenu />
@@ -35,16 +35,19 @@ class App extends Component {
         </Button>
 
         <br />
-        {!isLoading ? (
-          <VBox>
-            <ObservedGauge />
-            <br />
-            <Projection />
-            <ProjectionButtons />
-          </VBox>
-        ) : (
-          <Spin />
-        )}
+
+        <VBox>
+          {!isLoading ? <ObservedGauge /> : <Spin />}
+          <br />
+          {!isPLoading ? (
+            <div>
+              <Projection />
+              <ProjectionButtons />
+            </div>
+          ) : (
+            <Spin />
+          )}
+        </VBox>
       </Page>
     );
   }

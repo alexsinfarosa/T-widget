@@ -35,7 +35,7 @@ export default class ObservedGauge extends Component {
     // if (isGraph) width = width / 1.2;
 
     return (
-      <Box>
+      <Box bordered>
         <PieChart width={width} height={height}>
           <Pie
             activeIndex={observedIndex}

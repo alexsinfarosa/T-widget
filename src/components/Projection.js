@@ -30,14 +30,14 @@ export default class Prohection extends Component {
       projectedYearlyGrouped
     } = this.props.store.app;
 
-    projectedYearlyGrouped.map(d => console.log(d.slice()));
+    console.log(projectedYearlyGrouped);
 
     const cell = projectedArcData.map((arc, index) => {
       return <Cell key={index} fill={arcColoring(arc.name)} />;
     });
 
     return (
-      <Box>
+      <Box bordered>
         <PieChart width={width} height={height}>
           <Pie
             activeIndex={projectedIndex}
