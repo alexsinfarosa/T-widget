@@ -301,12 +301,28 @@ export default class appStore {
     let results = [];
     const x = [80, 85, 90, 95, 100];
     if (this.projectedYearlyGrouped.length !== 0) {
-      this.projectedYearlyGrouped.forEach(year => {
+      const month = format(new Date(), "MM");
+
+      const filtered = this.projection.filter(
+        arr => !isAfter(arr[0], `${arr[0].slice(0, 4)}-${month}`)
+      );
+
+      let tempArray = [];
+      filtered.forEach(year => {
         const y = year.slice(1, 6);
         const daysAbove = spline(this.temperature, x, y);
-        results.push([year[0], Math.round(Math.abs(daysAbove))]);
+        tempArray.push([year[0], daysAbove]);
         // console.log([year[0], Math.round(Math.abs(daysAbove))]);
       });
+
+      const m = Number(month);
+      let oneYear = [];
+      for (let i = 0; i < tempArray.length; i += m) {
+        oneYear = tempArray.slice(i, i + m);
+        results.push(transposeReduce(oneYear));
+      }
+
+      results.map(x => console.log(x.slice()));
       return results;
     }
     return results;
@@ -327,8 +343,10 @@ export default class appStore {
     if (d !== 0) {
       let existingItems = {};
       let quantiles = jStat.quantiles(d, [0, 0.25, 0.5, 0.75, 1]);
+      console.log(quantiles);
       if (quantiles.length !== 0) {
         quantiles = quantiles.map(x => Math.round(x));
+        console.log(quantiles);
         quantiles.forEach((value, i) => {
           let q;
           if (i === 0) q = 0;
