@@ -99,12 +99,14 @@ export const index = (daysAbovethreshold, quantiles) => {
 
   if (q.length === 2) {
     console.log(`d: ${d}, q = [.75, 1]: [${q[0]}, ${q[1]}]`);
-    // is the 75%
+    // is the 75% or less
     if (d === q[0]) return 0;
     // is above
-    if (d > q[0]) return 1;
-    // is slightly above
-    if (d < q[0]) return 2;
+    if (d > q[0] && d < q[1]) return 1;
+    // is max
+    if (d === q[1]) return 2;
+    // Not expected
+    if (d < q[0]) return 3;
   }
 
   if (q.length === 1) {
@@ -357,15 +359,15 @@ export const arcData = (q, days, temp, darkArcLabel) => {
       },
       {
         name: "Max",
-        startArcQuantile: q[2],
-        endArcQuantile: q[2],
+        startArcQuantile: q[1],
+        endArcQuantile: q[1],
         daysAbove: days,
         t: temp
       },
       {
         name: darkArcLabel,
         value: 1,
-        startArcQuantile: q[2],
+        startArcQuantile: q[1],
         endArcQuantile: q[0],
         daysAbove: days,
         t: temp

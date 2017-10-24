@@ -19,11 +19,11 @@ import GraphLabels from "./GraphLables";
 @observer
 class TimeSeries extends Component {
   render() {
-    const { temperature } = this.props.store.app;
-    const { index, arcData, graphData, quantiles } = this.props;
+    const { temperature, observedMean } = this.props.store.app;
+    const { index, arcData, graphData } = this.props;
 
-    let mean;
-    if (quantiles) mean = quantiles[2];
+    // let mean;
+    // if (quantiles) mean = quantiles[2];
     const { width, height } = this.props;
     const data = graphData.slice();
 
@@ -51,7 +51,11 @@ class TimeSeries extends Component {
               type: "rect",
               color: "#ddd"
             },
-            { value: `Mean ${mean}`, type: "line", color: "#ff7300" }
+            {
+              value: `Observed Data Mean ${observedMean}`,
+              type: "line",
+              color: "#ff7300"
+            }
           ]}
         />
         <Bar dataKey="days above">

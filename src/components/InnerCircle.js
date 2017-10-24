@@ -26,37 +26,37 @@ const InnerCircle = ({
   const ey = my;
   const textAnchor = cos >= 0 ? "start" : "end";
 
-  const { startArcQuantile, endArcQuantile, daysAbove } = payload;
+  const { startArcQuantile, endArcQuantile, daysAbove, name } = payload;
 
-  let anglesDiff = endAngle - startAngle;
-  if (anglesDiff < 0) anglesDiff = anglesDiff * -1;
-
-  let quantilesDiff = endArcQuantile - startArcQuantile;
-  if (quantilesDiff === 0) quantilesDiff = endArcQuantile;
-  if (isNaN(quantilesDiff)) quantilesDiff = 0;
-
+  const anglesDiff = Math.abs(endAngle - startAngle);
+  let quantileDiff = Math.abs(endArcQuantile - startArcQuantile);
   let oneDeg;
-  if (anglesDiff === 0 || quantilesDiff === 0) {
-    oneDeg = 0;
+
+  if (name === "Not Expected") {
+    console.log("YEs smalleer");
+    oneDeg = Math.abs(anglesDiff / 2 / endArcQuantile);
+    console.log(oneDeg);
   } else {
-    oneDeg = anglesDiff / quantilesDiff;
+    oneDeg = Math.abs(anglesDiff / quantileDiff);
   }
 
-  let theta = (endArcQuantile - daysAbove) * oneDeg;
+  if (quantileDiff === 0) quantileDiff = endArcQuantile;
+  if (isNaN(quantileDiff)) quantileDiff = 0;
 
-  if (theta < 0) theta = theta * -1;
+  if (isNaN(oneDeg)) oneDeg = 0;
+
+  let theta = Math.abs((endArcQuantile - daysAbove) * oneDeg);
   if (isNaN(theta)) theta = 0;
 
-  // console.log(
-  //   endAngle,
-  //   startArcQuantile,
-  //   endArcQuantile,
-  //   daysAbove,
-  //   anglesDiff,
-  //   quantilesDiff,
-  //   oneDeg,
-  //   theta
-  // );
+  console.log(
+    anglesDiff,
+    endArcQuantile,
+    startArcQuantile,
+    quantileDiff,
+    daysAbove,
+    oneDeg,
+    theta
+  );
 
   return (
     <g>

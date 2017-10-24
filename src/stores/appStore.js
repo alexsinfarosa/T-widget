@@ -62,14 +62,13 @@ export default class appStore {
     return [];
   }
 
-  // @computed
-  // get observedQuantiles() {
-  //   if (this.observedDays !== 0) {
-  //     const q = jStat.quantiles(this.observedDays, [0, 0.25, 0.5, 0.75, 1]);
-  //     return q.map(n => Math.round(n));
-  //   }
-  //   return [];
-  // }
+  @computed
+  get observedMean() {
+    if (this.observedData !== 0) {
+      return jStat.quantiles(this.observedDays, [0.5])[0];
+    }
+    return 0;
+  }
 
   @computed
   get observedQuantiles() {
@@ -167,7 +166,11 @@ export default class appStore {
       });
   };
 
-  // Projection 2040-2069 ----------------------------------------------------------
+  // Projections ----------------------------------------------------------
+
+  @observable highEmission = 45;
+  @action setHighEmission = d => (this.highEmission = d);
+
   @observable projectedData2040 = [];
 
   @action
@@ -185,7 +188,7 @@ export default class appStore {
       loc: [this.station.lon, this.station.lat],
       sdate: [2040, 1],
       edate: [2069, month],
-      grid: "loca:wMean:rcp45",
+      grid: `loca:wMean:rcp${this.highEmission}`,
       elems: [
         { name: "maxt", interval: [0, 1], reduce: `cnt_gt_80` },
         { name: "maxt", interval: [0, 1], reduce: `cnt_gt_85` },
@@ -195,7 +198,7 @@ export default class appStore {
       ]
     };
 
-    // console.log(params);
+    console.log(params);
 
     return axios
       .post(`${this.protocol}//grid2.rcc-acis.org/GridData`, params)
@@ -306,6 +309,7 @@ export default class appStore {
       const filtered = this.projection.filter(
         arr => !isAfter(arr[0], `${arr[0].slice(0, 4)}-${month}`)
       );
+      filtered.map(x => console.log(x.slice()));
 
       let tempArray = [];
       filtered.forEach(year => {
@@ -322,7 +326,7 @@ export default class appStore {
         results.push(transposeReduce(oneYear));
       }
 
-      results.map(x => console.log(x.slice()));
+      // results.map(x => console.log(x.slice()));
       return results;
     }
     return results;
@@ -356,12 +360,14 @@ export default class appStore {
           if (i === 4) q = 1;
           existingItems[value] = q;
         });
+
         console.log(existingItems);
         console.log(
           Object.values(
             jStat.quantiles(d, Object.values(existingItems))
           ).map(q => Math.round(q))
         );
+
         return Object.values(
           jStat.quantiles(d, Object.values(existingItems))
         ).map(q => Math.round(q));
@@ -386,7 +392,7 @@ export default class appStore {
         this.daysAboveThresholdThisYear,
         this.temperature,
         "Not Expected"
-      ); // fix this
+      );
     }
     return [];
   }
