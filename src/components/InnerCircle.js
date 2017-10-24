@@ -33,9 +33,7 @@ const InnerCircle = ({
   let oneDeg;
 
   if (name === "Not Expected") {
-    console.log("YEs smalleer");
     oneDeg = Math.abs(anglesDiff / 2 / endArcQuantile);
-    console.log(oneDeg);
   } else {
     oneDeg = Math.abs(anglesDiff / quantileDiff);
   }
@@ -48,15 +46,15 @@ const InnerCircle = ({
   let theta = Math.abs((endArcQuantile - daysAbove) * oneDeg);
   if (isNaN(theta)) theta = 0;
 
-  console.log(
-    anglesDiff,
-    endArcQuantile,
-    startArcQuantile,
-    quantileDiff,
-    daysAbove,
-    oneDeg,
-    theta
-  );
+  // console.log(
+  //   anglesDiff,
+  //   endArcQuantile,
+  //   startArcQuantile,
+  //   quantileDiff,
+  //   daysAbove,
+  //   oneDeg,
+  //   theta
+  // );
 
   return (
     <g>

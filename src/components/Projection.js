@@ -29,8 +29,6 @@ export default class Prohection extends Component {
       projectedDataGraph
     } = this.props.store.app;
 
-    // console.log(projectedYearlyGrouped);
-
     const cell = projectedArcData.map((arc, index) => {
       return <Cell key={index} fill={arcColoring(arc.name)} />;
     });

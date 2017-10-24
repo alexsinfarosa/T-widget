@@ -198,7 +198,7 @@ export default class appStore {
       ]
     };
 
-    console.log(params);
+    // console.log(params);
 
     return axios
       .post(`${this.protocol}//grid2.rcc-acis.org/GridData`, params)
@@ -309,7 +309,7 @@ export default class appStore {
       const filtered = this.projection.filter(
         arr => !isAfter(arr[0], `${arr[0].slice(0, 4)}-${month}`)
       );
-      filtered.map(x => console.log(x.slice()));
+      // filtered.map(x => console.log(x.slice()));
 
       let tempArray = [];
       filtered.forEach(year => {
