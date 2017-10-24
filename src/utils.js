@@ -1,7 +1,3 @@
-export const hasDuplicates = array => {
-  return new Set(array).size !== array.length;
-};
-
 export const reevaluateQuantiles = q => {
   console.log(`original: [${q}]`);
   const _min = q[0];
@@ -40,7 +36,7 @@ export const index = (daysAbovethreshold, quantiles) => {
   const q = quantiles; // ex: [3,11,23]
 
   if (q.length === 5) {
-    console.log(`d: ${d}, q = [min, 25, 50, 75, max]: [${q}]`);
+    console.log(`d: ${d}, q = [min, .25, .5, .75, 1]: [${q}]`);
     // is the min
     if (d === q[0]) return 0;
     // is below
@@ -379,6 +375,7 @@ export const arcData = (q, days, temp, darkArcLabel) => {
 };
 
 export const transposeReduce = d => {
+  d.map(x => console.log(x.slice()));
   const date = d[d.length - 1][0];
   const arrWithNoDate = d.map(arr => arr.slice(1, arr.length));
   const aboveDaysAtSameTemp = arrWithNoDate[0].map((col, i) =>

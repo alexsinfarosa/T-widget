@@ -1,19 +1,12 @@
 import { observable, action, computed } from "mobx";
 import { stations } from "stations";
 import format from "date-fns/format";
-import differenceInCalendarMonths from "date-fns/difference_in_calendar_months";
 import axios from "axios";
 import spline from "cubic-spline";
 import { jStat } from "jStat";
 import isAfter from "date-fns/is_after";
 
-import {
-  reevaluateQuantiles,
-  index,
-  arcData,
-  transposeReduce,
-  hasDuplicates
-} from "utils";
+import { index, arcData, transposeReduce } from "utils";
 
 export default class appStore {
   constructor(fetch) {
@@ -80,11 +73,12 @@ export default class appStore {
 
   @computed
   get observedQuantiles() {
+    console.log("Observed");
     const d = this.observedDays;
     if (d !== 0) {
       let existingItems = {};
       let quantiles = jStat.quantiles(d, [0, 0.25, 0.5, 0.75, 1]);
-      console.log(quantiles);
+      quantiles = quantiles.map(x => Math.round(x));
       quantiles.forEach((value, i) => {
         let q;
         if (i === 0) q = 0;
@@ -105,14 +99,6 @@ export default class appStore {
       ).map(q => Math.round(q));
     }
   }
-
-  // @computed
-  // get observedQuantilesNoDuplicates() {
-  //   if (this.observedDays !== 0) {
-  //     return reevaluateQuantiles(this.observedQuantiles);
-  //   }
-  //   return [];
-  // }
 
   @computed
   get observedIndex() {
@@ -283,7 +269,7 @@ export default class appStore {
       const filtered = this.projection.filter(
         arr => !isAfter(arr[0], `${arr[0].slice(0, 4)}-${month}`)
       );
-
+      // filtered.map(x => console.log(x.slice()));
       const m = Number(month);
 
       const initial = filtered.slice(0, m);
@@ -304,6 +290,7 @@ export default class appStore {
       const end = filtered.slice(-(m + 1));
       const lastYear = transposeReduce(end);
       results.push(lastYear);
+      // results.map(x => console.log(x.slice()));
       return results;
     }
     return results;
@@ -335,39 +322,35 @@ export default class appStore {
 
   @computed
   get projectedQuantiles() {
+    console.log(this.selectedProjection);
     const d = this.projectedDays;
     if (d !== 0) {
       let existingItems = {};
       let quantiles = jStat.quantiles(d, [0, 0.25, 0.5, 0.75, 1]);
-      console.log(quantiles);
-      quantiles.forEach((value, i) => {
-        let q;
-        if (i === 0) q = 0;
-        if (i === 1) q = 0.25;
-        if (i === 2) q = 0.5;
-        if (i === 3) q = 0.75;
-        if (i === 4) q = 1;
-        existingItems[value] = q;
-      });
-      console.log(existingItems);
-      console.log(
-        Object.values(jStat.quantiles(d, Object.values(existingItems))).map(q =>
-          Math.round(q)
-        )
-      );
-      return Object.values(
-        jStat.quantiles(d, Object.values(existingItems))
-      ).map(q => Math.round(q));
+      if (quantiles.length !== 0) {
+        quantiles = quantiles.map(x => Math.round(x));
+        quantiles.forEach((value, i) => {
+          let q;
+          if (i === 0) q = 0;
+          if (i === 1) q = 0.25;
+          if (i === 2) q = 0.5;
+          if (i === 3) q = 0.75;
+          if (i === 4) q = 1;
+          existingItems[value] = q;
+        });
+        console.log(existingItems);
+        console.log(
+          Object.values(
+            jStat.quantiles(d, Object.values(existingItems))
+          ).map(q => Math.round(q))
+        );
+        return Object.values(
+          jStat.quantiles(d, Object.values(existingItems))
+        ).map(q => Math.round(q));
+      }
     }
+    return [];
   }
-
-  // @computed
-  // get projectedQuantilesNoDuplicates() {
-  //   if (this.projectedDays.length !== 0) {
-  //     return reevaluateQuantiles(this.projectedQuantiles);
-  //   }
-  //   return [];
-  // }
 
   @computed
   get projectedIndex() {

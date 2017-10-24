@@ -33,6 +33,7 @@ const InnerCircle = ({
 
   let quantilesDiff = endArcQuantile - startArcQuantile;
   if (quantilesDiff === 0) quantilesDiff = endArcQuantile;
+  if (isNaN(quantilesDiff)) quantilesDiff = 0;
 
   let oneDeg;
   if (anglesDiff === 0 || quantilesDiff === 0) {
@@ -42,9 +43,12 @@ const InnerCircle = ({
   }
 
   let theta = (endArcQuantile - daysAbove) * oneDeg;
+
   if (theta < 0) theta = theta * -1;
+  if (isNaN(theta)) theta = 0;
 
   // console.log(
+  //   endAngle,
   //   startArcQuantile,
   //   endArcQuantile,
   //   daysAbove,
@@ -53,6 +57,7 @@ const InnerCircle = ({
   //   oneDeg,
   //   theta
   // );
+
   return (
     <g>
       {payload.name === "Not Expected" && (

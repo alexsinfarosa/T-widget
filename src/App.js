@@ -39,7 +39,7 @@ class App extends Component {
         <VBox>
           {!isLoading ? <ObservedGauge /> : <Spin />}
           <br />
-          {!isPLoading ? (
+          {!isLoading && !isPLoading ? (
             <div>
               <Projection />
               <ProjectionButtons />
