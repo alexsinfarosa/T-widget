@@ -142,9 +142,9 @@ export default class appStore {
 
     const params = {
       sid: this.station.sid,
-      sdate: `POR-${format(new Date(), "MM-DD") // you can change back this to 1980-08-01
+      sdate: `POR-${format(new Date("2017-06-13"), "MM-DD") // you can change back this to 1980-08-01
       }`,
-      edate: format(new Date(), "YYYY-MM-DD"),
+      edate: format(new Date("2017-06-13"), "YYYY-MM-DD"),
       elems: [
         {
           name: "maxt",
@@ -267,81 +267,42 @@ export default class appStore {
     this.projection = d;
   };
 
-  // @computed
-  // get projectedYearlyGrouped() {
-  //   let results = [];
-  //   if (this.projection.length !== 0) {
-  //     const filtered = this.projection.filter(
-  //       arr => !isAfter(arr[0], `${arr[0].slice(0, 4)}-${this.month}`)
-  //     );
-  //     filtered.map(x => console.log(x.slice()));
-  //     console.log(this.month);
-
-  //     const initial = filtered.slice(0, this.month);
-  //     // console.log(initial);
-
-  //     const firstYear = transposeReduce(initial);
-  //     results.push(firstYear);
-
-  //     const middle = filtered.slice(this.month, -this.month);
-  //     // middle.map(x => console.log(x.slice()));
-  //     let splinedTemp = [];
-  //     for (let i = 0; i < middle.length; i += this.month) {
-  //       splinedTemp = middle.slice(i, i + this.month);
-  //       const middleYear = transposeReduce(splinedTemp);
-  //       results.push(middleYear);
-  //     }
-
-  //     const end = filtered.slice(-(this.month + 1));
-  //     const lastYear = transposeReduce(end);
-  //     results.push(lastYear);
-  //     results.map(x => console.log(x.slice()));
-  //     return results;
-  //   }
-  //   return results;
-  // }
-
   @computed
-  get yearlyDaysAboveP() {
-    let results = [];
-    const x = [80, 85, 90, 95, 100];
-
-    const filtered = this.projection.filter(
-      arr => !isAfter(arr[0], `${arr[0].slice(0, 4)}-${this.month}`)
-    );
-    // filtered.slice(0, 10).map(x => console.log(x.slice()));
+  get daysAbovePerYear() {
+    const mm = 12;
 
     let splinedTemp = [];
-    filtered.forEach(year => {
+    const x = [80, 85, 90, 95, 100];
+    this.projection.forEach(year => {
       const y = year.slice(1, 6);
       const daysAbove = spline(this.temperature, x, y);
       splinedTemp.push([year[0], daysAbove]);
     });
-
-    // splinedTemp.slice(0, 10).map(x => console.log(x.slice()));
+    // splinedTemp.slice(0, mm).map(x => console.log(x.slice()));
 
     const splinedTempLastMonths = splinedTemp.map(
       month => month.slice(0, 1)[0]
     );
-    // console.log(splinedTempLastMonths);
+    // splinedTempLastMonths.slice(0, mm).map(x => console.log(x));
 
     const splinedTempValues = splinedTemp.map(
       month => month.slice(1, month.length)[0]
     );
-    // console.log(splinedTempValues);
+    // splinedTempValues.slice(0, mm).map(x => console.log(x));
 
     const daysInEachMonth = splinedTemp.map(month => getDaysInMonth(month[0]));
-    // console.log(daysInEachMonth);
+    // daysInEachMonth.slice(0, mm).map(x => console.log(x));
 
-    const dayOfYear = getDayOfYear(new Date());
-    for (let i = 0; i < splinedTemp.length; i += this.month) {
-      const lastMonth = splinedTempLastMonths
-        .slice(i, i + this.month)
-        .slice(-1)[0];
-      // console.log(lastMonth);
+    const dayOfYear = getDayOfYear(new Date("2017-06-13"));
+    let results = [];
+    for (let i = 0; i < splinedTemp.length; i += mm) {
+      const date = splinedTempLastMonths.slice(i, i + mm).slice(-1)[0];
+      const year = date.split("-")[0];
+      const currentMonth = `${year}-${this.month}`;
+      // console.log(currentMonth);
 
       let vCumulative = 0;
-      const values = splinedTempValues.slice(i, i + this.month);
+      const values = splinedTempValues.slice(i, i + mm);
       const valuesR = map(values, n => {
         vCumulative += n;
         return vCumulative;
@@ -349,25 +310,24 @@ export default class appStore {
       // console.log(valuesR);
 
       let dCumulative = 0;
-      const days = daysInEachMonth.slice(i, i + this.month);
+      const days = daysInEachMonth.slice(i, i + mm);
       const daysR = map(days, d => {
         dCumulative += d;
         return dCumulative;
       });
       // console.log(daysR);
       const daysAbove = spline(dayOfYear, daysR, valuesR);
-      // console.log([lastMonth, daysAbove]);
-      results.push([lastMonth, daysAbove]);
+      // console.log(dayOfYear, [currentMonth, daysAbove]);
+      results.push([currentMonth, daysAbove]);
     }
 
-    // results.map(x => console.log(x.slice()));
     return results;
   }
 
   @computed
   get projectedDays() {
-    if (this.yearlyDaysAboveP.length !== 0) {
-      return this.yearlyDaysAboveP.map(year => year.slice(1, year.length));
+    if (this.daysAbovePerYear.length !== 0) {
+      return this.daysAbovePerYear.map(year => year.slice(1, year.length)[0]);
     }
     return [];
   }
@@ -375,11 +335,16 @@ export default class appStore {
   @computed
   get projectedQuantiles() {
     console.log(this.selectedProjection);
-    const d = this.projectedDays;
-    if (d !== 0) {
+    if (this.projectedDays.length !== 0) {
       let existingItems = {};
-      let quantiles = jStat.quantiles(d, [0, 0.25, 0.5, 0.75, 1]);
-      // console.log(quantiles);
+      let quantiles = jStat.quantiles(this.projectedDays, [
+        0,
+        0.25,
+        0.5,
+        0.75,
+        1
+      ]);
+      console.log(quantiles);
       if (quantiles.length !== 0) {
         quantiles = quantiles.map(x => Math.round(x));
         // console.log(quantiles);
@@ -396,12 +361,12 @@ export default class appStore {
         console.log(existingItems);
         console.log(
           Object.values(
-            jStat.quantiles(d, Object.values(existingItems))
+            jStat.quantiles(this.projectedDays, Object.values(existingItems))
           ).map(q => Math.round(q))
         );
 
         return Object.values(
-          jStat.quantiles(d, Object.values(existingItems))
+          jStat.quantiles(this.projectedDays, Object.values(existingItems))
         ).map(q => Math.round(q));
       }
     }
@@ -433,7 +398,7 @@ export default class appStore {
   get projectedDataGraph() {
     const values = this.observedData.map(year => Number(year[1]));
     let results = [];
-    this.yearlyDaysAboveP.forEach(d => {
+    this.daysAbovePerYear.forEach(d => {
       results.push({
         year: format(d[0], "YYYY"),
         "days above": Number(d[1]),
