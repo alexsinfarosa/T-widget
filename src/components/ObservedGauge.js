@@ -27,7 +27,7 @@ export default class ObservedGauge extends Component {
       isGraph,
       observedDataGraph
     } = this.props.store.app;
-
+    observedArcData.map(x => console.log(x));
     const cell = observedArcData.map((arc, index) => {
       return <Cell key={index} fill={arcColoring(arc.name)} />;
     });

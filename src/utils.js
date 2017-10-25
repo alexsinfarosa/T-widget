@@ -1,37 +1,3 @@
-export const splineDays = (arr, days) => {};
-
-export const reevaluateQuantiles = q => {
-  console.log(`original: [${q}]`);
-  const _min = q[0];
-  const _25 = q[1];
-  const _50 = q[2];
-  const _75 = q[3];
-  const _max = q[4];
-
-  if (_min === _25 && _25 === _50 && _50 === _75 && _75 === _max) {
-    console.log(`q = [max]: [${_50}, ${_max}]`);
-    return [_max];
-  }
-
-  if (_min === _25 && _25 === _50 && _50 === _75) {
-    console.log(`q = [75, max]: [${_50}, ${_max}]`);
-    return [_75, _max];
-  }
-
-  if (_min === _25 && _25 === _50) {
-    console.log(`q = [50, 75, max]: [${_50}, ${_75}, ${_max}]`);
-    return [_50, _75, _max];
-  }
-
-  if (_min === _25) {
-    console.log(`q = [25, 50, 75, max]: [${_25}, ${_50}, ${_75}, ${_max}]`);
-    return [_25, _50, _75, _max];
-  }
-
-  console.log(`q = [min, 25, 50, 75, max]: [${q}]`);
-  return q;
-};
-
 // returns the index of the array where the value d is closest to
 export const index = (daysAbovethreshold, quantiles) => {
   const d = daysAbovethreshold; // ex: 13
@@ -376,10 +342,16 @@ export const arcData = (q, days, temp, darkArcLabel) => {
       }
     ];
   }
-};
 
-export const transposeReduce = oneYear => {
-  const lastMonth = oneYear[oneYear.length - 1][0];
-  const days = oneYear.map(arr => arr.slice(1, arr.length)[0]);
-  return [lastMonth, days.reduce((a, b) => a + b, 0)];
+  if (q.length === 1) {
+    return [
+      {
+        name: darkArcLabel,
+        startArcQuantile: q[0],
+        endArcQuantile: q[0],
+        daysAbove: days,
+        t: temp
+      }
+    ];
+  }
 };

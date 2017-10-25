@@ -28,6 +28,7 @@ export default class Prohection extends Component {
       projectedArcData,
       projectedDataGraph
     } = this.props.store.app;
+    projectedArcData.map(x => console.log(x));
 
     const cell = projectedArcData.map((arc, index) => {
       return <Cell key={index} fill={arcColoring(arc.name)} />;
