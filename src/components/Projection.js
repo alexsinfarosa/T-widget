@@ -47,7 +47,7 @@ export default class Prohection extends Component {
             labelLine={false}
             label={PieLabels}
             innerRadius={80}
-            outerRadius={140}
+            outerRadius={150}
           >
             {cell}
           </Pie>

@@ -52,7 +52,7 @@ export default class appStore {
 
   @computed
   get daysAboveThresholdThisYear() {
-    if (this.observedData !== 0) {
+    if (this.observedData.length !== 0) {
       return this.observedData.slice(-1).map(arr => Number(arr[1]))[0];
     }
     return [];
@@ -60,7 +60,7 @@ export default class appStore {
 
   @computed
   get observedDays() {
-    if (this.observedData !== 0) {
+    if (this.observedData.length !== 0) {
       return this.observedData.map(arr => Number(arr[1]));
     }
     return [];
@@ -68,7 +68,7 @@ export default class appStore {
 
   @computed
   get observedMean() {
-    if (this.observedData !== 0) {
+    if (this.observedData.length !== 0) {
       return jStat.quantiles(this.observedDays, [0.5])[0];
     }
     return 0;
@@ -78,7 +78,7 @@ export default class appStore {
   get observedQuantiles() {
     console.log("Observed");
     const d = this.observedDays;
-    if (d !== 0) {
+    if (d.length !== 0) {
       let existingItems = {};
       let quantiles = jStat.quantiles(d, [0, 0.25, 0.5, 0.75, 1]);
       quantiles = quantiles.map(x => Math.round(x));
@@ -105,7 +105,7 @@ export default class appStore {
 
   @computed
   get observedIndex() {
-    if (this.observedDays !== 0) {
+    if (this.observedQuantiles.length !== 0) {
       return index(this.daysAboveThresholdThisYear, this.observedQuantiles);
     }
     return [];
@@ -113,12 +113,15 @@ export default class appStore {
 
   @computed
   get observedArcData() {
-    return arcData(
-      this.observedQuantiles,
-      this.daysAboveThresholdThisYear,
-      this.temperature,
-      "New Record"
-    ); // fix this
+    if (this.observedQuantiles.length !== 0) {
+      return arcData(
+        this.observedQuantiles,
+        this.daysAboveThresholdThisYear,
+        this.temperature,
+        "New Record"
+      ); // fix this
+    }
+    return [];
   }
 
   @computed
@@ -375,7 +378,7 @@ export default class appStore {
 
   @computed
   get projectedIndex() {
-    if (this.projectedDays.length !== 0) {
+    if (this.projectedQuantiles.length !== 0) {
       return index(this.daysAboveThresholdThisYear, this.projectedQuantiles);
     }
     return [];
@@ -383,7 +386,7 @@ export default class appStore {
 
   @computed
   get projectedArcData() {
-    if (this.projectedDays.length !== 0) {
+    if (this.projectedQuantiles.length !== 0) {
       return arcData(
         this.projectedQuantiles,
         this.daysAboveThresholdThisYear,
@@ -391,7 +394,7 @@ export default class appStore {
         "Not Expected"
       );
     }
-    return [];
+    return [0, 0];
   }
 
   @computed
