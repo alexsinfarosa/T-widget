@@ -5,8 +5,12 @@ import axios from "axios";
 import spline from "cubic-spline";
 import { jStat } from "jStat";
 import isAfter from "date-fns/is_after";
+import getDaysInMonth from "date-fns/get_days_in_month";
+import getDayOfYear from "date-fns/get_day_of_year";
+import map from "lodash.map";
+import addMonths from "date-fns/add_months";
 
-import { index, arcData, transposeReduce } from "utils";
+import { index, arcData } from "utils";
 
 export default class appStore {
   constructor(fetch) {
@@ -173,6 +177,8 @@ export default class appStore {
 
   @observable projectedData2040 = [];
 
+  @observable month = Number(format(new Date(), "MM"));
+
   @action
   setProjectedData2040 = d => {
     this.projectedData2040 = d;
@@ -182,12 +188,11 @@ export default class appStore {
   loadProjection2040() {
     this.setIsPLoading(true);
     // Subtract 5 months from the current month to get data for the spline function
-    const month = Number(format(new Date(), "MM"));
 
     const params = {
       loc: [this.station.lon, this.station.lat],
       sdate: [2040, 1],
-      edate: [2069, month],
+      edate: [2069, 12],
       grid: `loca:wMean:rcp${this.highEmission}`,
       elems: [
         { name: "maxt", interval: [0, 1], reduce: `cnt_gt_80` },
@@ -225,12 +230,11 @@ export default class appStore {
   loadProjection2070() {
     this.setIsPLoading(true);
     // Subtract 5 months from the current month to get data for the spline function
-    const month = Number(format(new Date(), "MM"));
 
     const params = {
       loc: [this.station.lon, this.station.lat],
       sdate: [2070, 1],
-      edate: [2099, month],
+      edate: [2099, 12],
       grid: "loca:wMean:rcp45",
       elems: [
         { name: "maxt", interval: [0, 1], reduce: `cnt_gt_80` },
@@ -263,79 +267,107 @@ export default class appStore {
     this.projection = d;
   };
 
-  @computed
-  get projectedYearlyGrouped() {
-    let results = [];
-    if (this.projection.length !== 0) {
-      const month = format(new Date(), "MM");
+  // @computed
+  // get projectedYearlyGrouped() {
+  //   let results = [];
+  //   if (this.projection.length !== 0) {
+  //     const filtered = this.projection.filter(
+  //       arr => !isAfter(arr[0], `${arr[0].slice(0, 4)}-${this.month}`)
+  //     );
+  //     filtered.map(x => console.log(x.slice()));
+  //     console.log(this.month);
 
-      const filtered = this.projection.filter(
-        arr => !isAfter(arr[0], `${arr[0].slice(0, 4)}-${month}`)
-      );
-      // filtered.map(x => console.log(x.slice()));
-      const m = Number(month);
+  //     const initial = filtered.slice(0, this.month);
+  //     // console.log(initial);
 
-      const initial = filtered.slice(0, m);
-      // console.log(initial);
+  //     const firstYear = transposeReduce(initial);
+  //     results.push(firstYear);
 
-      const firstYear = transposeReduce(initial);
-      results.push(firstYear);
+  //     const middle = filtered.slice(this.month, -this.month);
+  //     // middle.map(x => console.log(x.slice()));
+  //     let splinedTemp = [];
+  //     for (let i = 0; i < middle.length; i += this.month) {
+  //       splinedTemp = middle.slice(i, i + this.month);
+  //       const middleYear = transposeReduce(splinedTemp);
+  //       results.push(middleYear);
+  //     }
 
-      const middle = filtered.slice(m, -m);
-      // middle.map(x => console.log(x.slice()));
-      let tempArray = [];
-      for (let i = 0; i < middle.length; i += m) {
-        tempArray = middle.slice(i, i + m);
-        const middleYear = transposeReduce(tempArray);
-        results.push(middleYear);
-      }
-
-      const end = filtered.slice(-(m + 1));
-      const lastYear = transposeReduce(end);
-      results.push(lastYear);
-      // results.map(x => console.log(x.slice()));
-      return results;
-    }
-    return results;
-  }
+  //     const end = filtered.slice(-(this.month + 1));
+  //     const lastYear = transposeReduce(end);
+  //     results.push(lastYear);
+  //     results.map(x => console.log(x.slice()));
+  //     return results;
+  //   }
+  //   return results;
+  // }
 
   @computed
   get yearlyDaysAboveP() {
     let results = [];
     const x = [80, 85, 90, 95, 100];
-    if (this.projectedYearlyGrouped.length !== 0) {
-      const month = format(new Date(), "MM");
 
-      const filtered = this.projection.filter(
-        arr => !isAfter(arr[0], `${arr[0].slice(0, 4)}-${month}`)
-      );
-      // filtered.map(x => console.log(x.slice()));
+    const filtered = this.projection.filter(
+      arr => !isAfter(arr[0], `${arr[0].slice(0, 4)}-${this.month}`)
+    );
+    // filtered.slice(0, 10).map(x => console.log(x.slice()));
 
-      let tempArray = [];
-      filtered.forEach(year => {
-        const y = year.slice(1, 6);
-        const daysAbove = spline(this.temperature, x, y);
-        tempArray.push([year[0], daysAbove]);
-        // console.log([year[0], Math.round(Math.abs(daysAbove))]);
+    let splinedTemp = [];
+    filtered.forEach(year => {
+      const y = year.slice(1, 6);
+      const daysAbove = spline(this.temperature, x, y);
+      splinedTemp.push([year[0], daysAbove]);
+    });
+
+    // splinedTemp.slice(0, 10).map(x => console.log(x.slice()));
+
+    const splinedTempLastMonths = splinedTemp.map(
+      month => month.slice(0, 1)[0]
+    );
+    // console.log(splinedTempLastMonths);
+
+    const splinedTempValues = splinedTemp.map(
+      month => month.slice(1, month.length)[0]
+    );
+    // console.log(splinedTempValues);
+
+    const daysInEachMonth = splinedTemp.map(month => getDaysInMonth(month[0]));
+    // console.log(daysInEachMonth);
+
+    const dayOfYear = getDayOfYear(new Date());
+    for (let i = 0; i < splinedTemp.length; i += this.month) {
+      const lastMonth = splinedTempLastMonths
+        .slice(i, i + this.month)
+        .slice(-1)[0];
+      // console.log(lastMonth);
+
+      let vCumulative = 0;
+      const values = splinedTempValues.slice(i, i + this.month);
+      const valuesR = map(values, n => {
+        vCumulative += n;
+        return vCumulative;
       });
+      // console.log(valuesR);
 
-      const m = Number(month);
-      let oneYear = [];
-      for (let i = 0; i < tempArray.length; i += m) {
-        oneYear = tempArray.slice(i, i + m);
-        results.push(transposeReduce(oneYear));
-      }
-
-      // results.map(x => console.log(x.slice()));
-      return results;
+      let dCumulative = 0;
+      const days = daysInEachMonth.slice(i, i + this.month);
+      const daysR = map(days, d => {
+        dCumulative += d;
+        return dCumulative;
+      });
+      // console.log(daysR);
+      const daysAbove = spline(dayOfYear, daysR, valuesR);
+      // console.log([lastMonth, daysAbove]);
+      results.push([lastMonth, daysAbove]);
     }
+
+    // results.map(x => console.log(x.slice()));
     return results;
   }
 
   @computed
   get projectedDays() {
     if (this.yearlyDaysAboveP.length !== 0) {
-      return this.yearlyDaysAboveP.map(year => year[1]);
+      return this.yearlyDaysAboveP.map(year => year.slice(1, year.length));
     }
     return [];
   }
@@ -347,10 +379,10 @@ export default class appStore {
     if (d !== 0) {
       let existingItems = {};
       let quantiles = jStat.quantiles(d, [0, 0.25, 0.5, 0.75, 1]);
-      console.log(quantiles);
+      // console.log(quantiles);
       if (quantiles.length !== 0) {
         quantiles = quantiles.map(x => Math.round(x));
-        console.log(quantiles);
+        // console.log(quantiles);
         quantiles.forEach((value, i) => {
           let q;
           if (i === 0) q = 0;

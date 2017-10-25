@@ -1,3 +1,5 @@
+export const splineDays = (arr, days) => {};
+
 export const reevaluateQuantiles = q => {
   console.log(`original: [${q}]`);
   const _min = q[0];
@@ -376,15 +378,8 @@ export const arcData = (q, days, temp, darkArcLabel) => {
   }
 };
 
-export const transposeReduce = d => {
-  // d.map(x => console.log(x.slice()));
-  const date = d[d.length - 1][0];
-  const arrWithNoDate = d.map(arr => arr.slice(1, arr.length));
-  const aboveDaysAtSameTemp = arrWithNoDate[0].map((col, i) =>
-    arrWithNoDate.map(row => row[i])
-  );
-  let results = aboveDaysAtSameTemp.map(arr => arr.reduce((a, b) => a + b, 0));
-  results.unshift(date);
-  // results.map(x => console.log(x));
-  return results;
+export const transposeReduce = oneYear => {
+  const lastMonth = oneYear[oneYear.length - 1][0];
+  const days = oneYear.map(arr => arr.slice(1, arr.length)[0]);
+  return [lastMonth, days.reduce((a, b) => a + b, 0)];
 };
