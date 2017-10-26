@@ -36,7 +36,7 @@ const InnerCircle = ({
   if (isNaN(quantileDiff)) quantileDiff = 0;
 
   let oneDeg = Math.abs(anglesDiff / quantileDiff);
-  if (isNaN(oneDeg)) oneDeg = 0;
+  if (isNaN(oneDeg) || oneDeg === Infinity) oneDeg = 0;
 
   let theta;
   if (name === "Not Expected" || name === "New Record") {
