@@ -99,6 +99,7 @@ export const arcColoring = name => {
   if (name === "Above") return "#E63B2E";
   if (name === "Max") return "#565656";
   if (name === "New Record" || name === "Not Expected") return "#292F36";
+  if (name === "Always Observed") return "#565656";
 };
 
 export const projectionHeaderMessage = name => {
@@ -360,7 +361,7 @@ export const arcData = (q, days, temp, darkArcLabel) => {
   if (q.length === 1) {
     return [
       {
-        name: darkArcLabel,
+        name: "Always Observed",
         // startArcQuantile: q[0],
         // endArcQuantile: q[0],
         daysAbove: days,

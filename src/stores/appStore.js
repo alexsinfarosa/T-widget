@@ -4,11 +4,9 @@ import format from "date-fns/format";
 import axios from "axios";
 import spline from "cubic-spline";
 import { jStat } from "jStat";
-import isAfter from "date-fns/is_after";
 import getDaysInMonth from "date-fns/get_days_in_month";
 import getDayOfYear from "date-fns/get_day_of_year";
 import map from "lodash.map";
-import addMonths from "date-fns/add_months";
 
 import { index, arcData } from "utils";
 
@@ -81,6 +79,7 @@ export default class appStore {
     if (d.length !== 0) {
       let existingItems = {};
       let quantiles = jStat.quantiles(d, [0, 0.25, 0.5, 0.75, 1]);
+      console.log(`raw: ${quantiles}`);
       quantiles = quantiles.map(x => Math.round(x));
       quantiles.forEach((value, i) => {
         let q;
@@ -145,9 +144,9 @@ export default class appStore {
 
     const params = {
       sid: this.station.sid,
-      sdate: `POR-${format(new Date(), "MM-DD") // you can change back this to 1980-08-01
+      sdate: `POR-${format(new Date("2017-06-24"), "MM-DD") // you can change back this to 1980-08-01
       }`,
-      edate: format(new Date(), "YYYY-MM-DD"),
+      edate: format(new Date("2017-06-24"), "YYYY-MM-DD"),
       elems: [
         {
           name: "maxt",
@@ -238,7 +237,7 @@ export default class appStore {
       loc: [this.station.lon, this.station.lat],
       sdate: [2070, 1],
       edate: [2099, 12],
-      grid: "loca:wMean:rcp45",
+      grid: `loca:wMean:rcp${this.highEmission}`,
       elems: [
         { name: "maxt", interval: [0, 1], reduce: `cnt_gt_80` },
         { name: "maxt", interval: [0, 1], reduce: `cnt_gt_85` },
@@ -296,7 +295,7 @@ export default class appStore {
     const daysInEachMonth = splinedTemp.map(month => getDaysInMonth(month[0]));
     // daysInEachMonth.slice(0, mm).map(x => console.log(x));
 
-    const dayOfYear = getDayOfYear(new Date());
+    const dayOfYear = getDayOfYear(new Date("2017-06-24"));
     let results = [];
     for (let i = 0; i < splinedTemp.length; i += mm) {
       const date = splinedTempLastMonths.slice(i, i + mm).slice(-1)[0];

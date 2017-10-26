@@ -46,17 +46,17 @@ const InnerCircle = ({
   }
   if (isNaN(theta)) theta = 0;
 
-  console.log(type);
-  console.log(payload);
-  console.log(
-    anglesDiff,
-    endArcQuantile,
-    startArcQuantile,
-    quantileDiff,
-    daysAbove,
-    oneDeg,
-    theta
-  );
+  // console.log(type);
+  // console.log(payload);
+  // console.log(
+  //   anglesDiff,
+  //   endArcQuantile,
+  //   startArcQuantile,
+  //   quantileDiff,
+  //   daysAbove,
+  //   oneDeg,
+  //   theta
+  // );
 
   return (
     <g>
