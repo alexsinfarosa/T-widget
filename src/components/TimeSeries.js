@@ -27,12 +27,7 @@ class TimeSeries extends Component {
     const { width, height } = this.props;
     const data = graphData.slice();
 
-    // console.log(
-    //   observedIndex,
-    //   temperature,
-    //   observedQuantiles,
-    //   observedDataGraph
-    // );
+    console.log(this.props);
 
     return (
       <ComposedChart width={width} height={height} data={data}>

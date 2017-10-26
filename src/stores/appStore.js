@@ -145,9 +145,9 @@ export default class appStore {
 
     const params = {
       sid: this.station.sid,
-      sdate: `POR-${format(new Date("2017-02-31"), "MM-DD") // you can change back this to 1980-08-01
+      sdate: `POR-${format(new Date("2017-04-31"), "MM-DD") // you can change back this to 1980-08-01
       }`,
-      edate: format(new Date("2017-02-31"), "YYYY-MM-DD"),
+      edate: format(new Date("2017-04-31"), "YYYY-MM-DD"),
       elems: [
         {
           name: "maxt",
@@ -296,7 +296,7 @@ export default class appStore {
     const daysInEachMonth = splinedTemp.map(month => getDaysInMonth(month[0]));
     // daysInEachMonth.slice(0, mm).map(x => console.log(x));
 
-    const dayOfYear = getDayOfYear(new Date("2017-02-31"));
+    const dayOfYear = getDayOfYear(new Date("2017-04-31"));
     let results = [];
     for (let i = 0; i < splinedTemp.length; i += mm) {
       const date = splinedTempLastMonths.slice(i, i + mm).slice(-1)[0];
@@ -379,6 +379,9 @@ export default class appStore {
   @computed
   get projectedIndex() {
     if (this.projectedQuantiles.length !== 0) {
+      console.log(
+        index(this.daysAboveThresholdThisYear, this.projectedQuantiles)
+      );
       return index(this.daysAboveThresholdThisYear, this.projectedQuantiles);
     }
     return [];
@@ -394,7 +397,7 @@ export default class appStore {
         "Not Expected"
       );
     }
-    return [0, 0];
+    return [];
   }
 
   @computed

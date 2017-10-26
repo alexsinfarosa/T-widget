@@ -1,6 +1,7 @@
 import React from "react";
 import { Sector } from "recharts";
 import { projectionHeaderMessage } from "utils";
+
 const InnerCircle = ({
   cx,
   cy,
@@ -29,32 +30,33 @@ const InnerCircle = ({
   const { startArcQuantile, endArcQuantile, daysAbove, name } = payload;
 
   const anglesDiff = Math.abs(endAngle - startAngle);
+
   let quantileDiff = Math.abs(endArcQuantile - startArcQuantile);
-  let oneDeg;
-
-  if (name === "Not Expected") {
-    oneDeg = Math.abs(anglesDiff / 2 / endArcQuantile);
-  } else {
-    oneDeg = Math.abs(anglesDiff / quantileDiff);
-  }
-
   if (quantileDiff === 0) quantileDiff = endArcQuantile;
   if (isNaN(quantileDiff)) quantileDiff = 0;
 
+  let oneDeg = Math.abs(anglesDiff / quantileDiff);
   if (isNaN(oneDeg)) oneDeg = 0;
 
-  let theta = Math.abs((endArcQuantile - daysAbove) * oneDeg);
+  let theta;
+  if (name === "Not Expected" || name === "New Record") {
+    theta = anglesDiff / 2;
+  } else {
+    theta = Math.abs((endArcQuantile - daysAbove) * oneDeg);
+  }
   if (isNaN(theta)) theta = 0;
 
-  // console.log(
-  //   anglesDiff,
-  //   endArcQuantile,
-  //   startArcQuantile,
-  //   quantileDiff,
-  //   daysAbove,
-  //   oneDeg,
-  //   theta
-  // );
+  console.log(type);
+  console.log(payload);
+  console.log(
+    anglesDiff,
+    endArcQuantile,
+    startArcQuantile,
+    quantileDiff,
+    daysAbove,
+    oneDeg,
+    theta
+  );
 
   return (
     <g>

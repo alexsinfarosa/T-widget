@@ -74,7 +74,7 @@ export const index = (daysAbovethreshold, quantiles) => {
     // is max
     if (d === q[1]) return 2;
     // Not expected
-    if (d < q[0]) return 3;
+    if (d < q[0] || d > q[1]) return 3;
   }
 
   if (q.length === 1) {
@@ -121,75 +121,80 @@ export const arcData = (q, days, temp, darkArcLabel) => {
         startArcQuantile: q[0],
         endArcQuantile: q[0],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 0
       },
       {
         name: "Below",
-        value: 1,
         startArcQuantile: q[0],
         endArcQuantile: q[1],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 1
       },
       {
         name: "25%",
         startArcQuantile: q[1],
         endArcQuantile: q[1],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 0
       },
       {
         name: "Slightly Below",
-        value: 1,
         startArcQuantile: q[1],
         endArcQuantile: q[2],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 1
       },
       {
         name: "Mean",
         startArcQuantile: q[2],
         endArcQuantile: q[2],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 0
       },
       {
         name: "Slightly Above",
-        value: 1,
         startArcQuantile: q[2],
         endArcQuantile: q[3],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 1
       },
       {
         name: "75%",
         startArcQuantile: q[3],
         endArcQuantile: q[3],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 0
       },
       {
         name: "Above",
-        value: 1,
         startArcQuantile: q[3],
         endArcQuantile: q[4],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 1
       },
       {
         name: "Max",
         startArcQuantile: q[4],
         endArcQuantile: q[4],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 0
       },
       {
         name: darkArcLabel,
-        value: 1,
         startArcQuantile: q[4],
         endArcQuantile: q[0],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 1
       }
     ];
   }
@@ -201,60 +206,64 @@ export const arcData = (q, days, temp, darkArcLabel) => {
         startArcQuantile: q[0],
         endArcQuantile: q[0],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 0
       },
       {
         name: "Slightly Below",
-        value: 1,
         startArcQuantile: q[0],
         endArcQuantile: q[1],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 1
       },
       {
         name: "Mean",
         startArcQuantile: q[1],
         endArcQuantile: q[1],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 0
       },
       {
         name: "Slightly Above",
-        value: 1,
         startArcQuantile: q[1],
         endArcQuantile: q[2],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 1
       },
       {
         name: "75%",
         startArcQuantile: q[2],
         endArcQuantile: q[2],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 0
       },
       {
         name: "Above",
-        value: 1,
         startArcQuantile: q[2],
         endArcQuantile: q[3],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 1
       },
       {
         name: "Max",
         startArcQuantile: q[3],
         endArcQuantile: q[3],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 0
       },
       {
         name: darkArcLabel,
-        value: 1,
         startArcQuantile: q[3],
         endArcQuantile: q[0],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 1
       }
     ];
   }
@@ -265,45 +274,48 @@ export const arcData = (q, days, temp, darkArcLabel) => {
         startArcQuantile: q[0],
         endArcQuantile: q[0],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 0
       },
       {
         name: "Slightly Above",
-        value: 1,
         startArcQuantile: q[0],
         endArcQuantile: q[1],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 1
       },
       {
         name: "75%",
         startArcQuantile: q[1],
         endArcQuantile: q[1],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 0
       },
       {
         name: "Above",
-        value: 1,
         startArcQuantile: q[1],
         endArcQuantile: q[2],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 1
       },
       {
         name: "Max",
         startArcQuantile: q[2],
         endArcQuantile: q[2],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 0
       },
       {
         name: darkArcLabel,
-        value: 1,
         startArcQuantile: q[2],
         endArcQuantile: q[0],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 1
       }
     ];
   }
@@ -315,30 +327,32 @@ export const arcData = (q, days, temp, darkArcLabel) => {
         startArcQuantile: q[0],
         endArcQuantile: q[0],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 0
       },
       {
         name: "Above",
-        value: 1,
         startArcQuantile: q[0],
         endArcQuantile: q[1],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 1
       },
       {
         name: "Max",
         startArcQuantile: q[1],
         endArcQuantile: q[1],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 0
       },
       {
         name: darkArcLabel,
-        value: 1,
         startArcQuantile: q[1],
         endArcQuantile: q[0],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 1
       }
     ];
   }
@@ -347,10 +361,11 @@ export const arcData = (q, days, temp, darkArcLabel) => {
     return [
       {
         name: darkArcLabel,
-        startArcQuantile: q[0],
-        endArcQuantile: q[0],
+        // startArcQuantile: q[0],
+        // endArcQuantile: q[0],
         daysAbove: days,
-        t: temp
+        t: temp,
+        value: 1
       }
     ];
   }
