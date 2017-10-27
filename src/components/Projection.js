@@ -56,8 +56,8 @@ export default class Prohection extends Component {
 
         {isGraph && (
           <TimeSeries
-            width={width}
-            height={height}
+            width={width - 30}
+            height={height - 30}
             index={projectedIndex}
             quantiles={projectedQuantiles}
             arcData={projectedArcData}

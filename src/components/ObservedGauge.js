@@ -54,8 +54,8 @@ export default class ObservedGauge extends Component {
         </PieChart>
         {isGraph && (
           <TimeSeries
-            width={width}
-            height={height}
+            width={width - 30}
+            height={height - 30}
             index={observedIndex}
             quantiles={observedQuantiles}
             arcData={observedArcData}

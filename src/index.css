@@ -11,13 +11,6 @@ body {
   min-height: 100vh;
   height: 100%;
   width: 100%;
-  overflow-x: hidden;
-}
-
-body.hide-scroll {
-  max-height: 100vh;
-  height: 100vh;
-  position: fixed;
 }
 
 #root {

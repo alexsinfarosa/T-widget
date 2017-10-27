@@ -61,8 +61,8 @@ class ProjectionButtons extends Component {
         <br />
         <div style={{ margin: "0 auto" }}>
           <Radio.Group onChange={this.changeEmission} value={highEmission}>
-            <Radio value={45}>Low Emission rpc4.5</Radio>
-            <Radio value={85}>High Emission rpc8.5</Radio>
+            <Radio value={45}>Low Emission rpc 4.5</Radio>
+            <Radio value={85}>High Emission rpc 8.5</Radio>
           </Radio.Group>
         </div>
       </VBox>

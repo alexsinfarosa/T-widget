@@ -406,7 +406,7 @@ export default class appStore {
     this.daysAbovePerYear.forEach(d => {
       results.push({
         year: format(d[0], "YYYY"),
-        "days above": Number(d[1]),
+        "days above": Math.round(Number(d[1])),
         mean: Math.round(jStat.quantiles(values, [0.5]))
       });
     });
