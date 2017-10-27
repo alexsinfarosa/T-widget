@@ -34,7 +34,7 @@ class ProjectionButtons extends Component {
   render() {
     const { selectedProjection, highEmission } = this.props.store.app;
     return (
-      <VBox>
+      <VBox style={{ marginBottom: "2rem" }}>
         <Radio.Group
           style={{ margin: "20px auto" }}
           defaultValue={selectedProjection}
@@ -58,7 +58,9 @@ class ProjectionButtons extends Component {
             Projection 2070-2099
           </Radio.Button>
         </Radio.Group>
+
         <br />
+
         <div style={{ margin: "0 auto" }}>
           <Radio.Group onChange={this.changeEmission} value={highEmission}>
             <Radio value={45}>Low Emission rpc 4.5</Radio>

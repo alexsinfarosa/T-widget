@@ -21,5 +21,4 @@ export const Box = styled.div`
 export const VBox = styled.div`
   display: flex;
   flex-direction: column;
-  flex: 1;
 `;

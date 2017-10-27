@@ -144,9 +144,9 @@ export default class appStore {
 
     const params = {
       sid: this.station.sid,
-      sdate: `POR-${format(new Date("2017-06-24"), "MM-DD") // you can change back this to 1980-08-01
+      sdate: `POR-${format(new Date(), "MM-DD") // you can change back this to 1980-08-01
       }`,
-      edate: format(new Date("2017-06-24"), "YYYY-MM-DD"),
+      edate: format(new Date(), "YYYY-MM-DD"),
       elems: [
         {
           name: "maxt",
@@ -295,7 +295,7 @@ export default class appStore {
     const daysInEachMonth = splinedTemp.map(month => getDaysInMonth(month[0]));
     // daysInEachMonth.slice(0, mm).map(x => console.log(x));
 
-    const dayOfYear = getDayOfYear(new Date("2017-06-24"));
+    const dayOfYear = getDayOfYear(new Date());
     let results = [];
     for (let i = 0; i < splinedTemp.length; i += mm) {
       const date = splinedTempLastMonths.slice(i, i + mm).slice(-1)[0];
