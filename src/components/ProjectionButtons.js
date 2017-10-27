@@ -10,19 +10,17 @@ class ProjectionButtons extends Component {
   onChange = e => {
     this.props.store.app.setSelectedProjection(e.target.value);
     if (e.target.value === "Projection 2040-2069") {
-      this.props.store.app.setProjection(
-        this.props.store.app.projectedData2040
-      );
+      this.props.store.app.loadProjection2040();
     } else {
-      this.props.store.app.setProjection(
-        this.props.store.app.projectedData2070
-      );
+      this.props.store.app.loadProjection2070();
     }
   };
 
   changeEmission = e => {
+    console.log(e.target.value);
     this.props.store.app.setHighEmission(e.target.value);
     const { selectedProjection } = this.props.store.app;
+    console.log(selectedProjection);
 
     if (selectedProjection === "Projection 2040-2069") {
       this.props.store.app.loadProjection2040();
@@ -33,6 +31,7 @@ class ProjectionButtons extends Component {
 
   render() {
     const { selectedProjection, highEmission } = this.props.store.app;
+    console.log(highEmission);
     return (
       <VBox style={{ marginBottom: "2rem" }}>
         <Radio.Group

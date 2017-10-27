@@ -11,13 +11,9 @@ class TempSlider extends Component {
     this.props.store.app.setTemperature(e);
     this.props.store.app.loadObservedData();
     if (selectedProjection === "Projection 2040-2069") {
-      this.props.store.app.setProjection(
-        this.props.store.app.projectedData2040
-      );
+      this.props.store.app.loadProjection2040();
     } else {
-      this.props.store.app.setProjection(
-        this.props.store.app.projectedData2070
-      );
+      this.props.store.app.loadProjection2070();
     }
   };
 

@@ -116,10 +116,10 @@ const InnerCircle = ({
           fill={fill}
           fontSize={11}
         >
-          <tspan x={cx} dy={"-1rem"}>
+          <tspan x={cx} dy={"-1.2em"}>
             Projection
           </tspan>
-          <tspan x={cx} dy={"1rem"}>
+          <tspan x={cx} dy={"1.2em"}>
             {type.slice(11, type.lenght)}
           </tspan>
         </text>

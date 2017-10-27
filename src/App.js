@@ -26,7 +26,7 @@ class App extends Component {
         <TempSlider />
         <br />
         <Button
-          style={{ minHeight: "33px" }}
+          style={{ minHeight: "33px", marginBottom: "1em" }}
           type={isGraph ? "primary" : "default"}
           icon="bar-chart"
           size="large"

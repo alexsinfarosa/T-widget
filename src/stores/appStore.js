@@ -175,16 +175,13 @@ export default class appStore {
   // Projections ----------------------------------------------------------
 
   @observable highEmission = 45;
-  @action setHighEmission = d => (this.highEmission = d);
-
-  @observable projectedData2040 = [];
-
-  @observable month = Number(format(new Date(), "MM"));
-
   @action
-  setProjectedData2040 = d => {
-    this.projectedData2040 = d;
+  setHighEmission = d => {
+    this.highEmission = d;
+    this.setProjection();
   };
+
+  // @observable month = Number(format(new Date(), "MM"));
 
   @action
   loadProjection2040() {
@@ -211,8 +208,9 @@ export default class appStore {
       .post(`${this.protocol}//grid2.rcc-acis.org/GridData`, params)
       .then(res => {
         // console.log(res.data.data);
-        this.setProjectedData2040(res.data.data);
-        this.setProjection(res.data.data);
+        if (this.selectedProjection === "Projection 2040-2069") {
+          this.setProjection(res.data.data);
+        }
         this.setIsPLoading(false);
       })
       .catch(err => {
@@ -221,12 +219,6 @@ export default class appStore {
   }
 
   // Projection 2070-2099 ----------------------------------------------------------
-  @observable projectedData2070 = [];
-
-  @action
-  setProjectedData2070 = d => {
-    this.projectedData2070 = d;
-  };
 
   @action
   loadProjection2070() {
@@ -253,7 +245,9 @@ export default class appStore {
       .post(`${this.protocol}//grid2.rcc-acis.org/GridData`, params)
       .then(res => {
         // console.log(res.data.data);
-        this.setProjectedData2070(res.data.data);
+        if (this.selectedProjection === "Projection 2070-2099") {
+          this.setProjection(res.data.data);
+        }
         this.setIsPLoading(false);
       })
       .catch(err => {
