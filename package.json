@@ -17,6 +17,7 @@
     "date-fns": "^1.28.5",
     "gh-pages": "^1.0.0",
     "jStat": "^1.7.1",
+    "lodash.isequal": "^4.5.0",
     "lodash.map": "^4.6.0",
     "mobx": "^3.3.1",
     "mobx-react": "^4.3.3",

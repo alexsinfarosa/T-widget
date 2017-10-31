@@ -8,7 +8,7 @@ import getDaysInMonth from "date-fns/get_days_in_month";
 import getDayOfYear from "date-fns/get_day_of_year";
 import map from "lodash.map";
 
-import { index, arcData } from "utils";
+import { index, arcData, determineQuantiles } from "utils";
 
 export default class appStore {
   constructor(fetch) {
@@ -75,37 +75,27 @@ export default class appStore {
   @computed
   get observedQuantiles() {
     console.log("Observed");
-    const d = this.observedDays;
-    if (d.length !== 0) {
-      let existingItems = {};
-      let quantiles = jStat.quantiles(d, [0, 0.25, 0.5, 0.75, 1]);
-      console.log(`raw: ${quantiles}`);
-      quantiles = quantiles.map(x => Math.round(x));
-      quantiles.forEach((value, i) => {
-        let q;
-        if (i === 0) q = 0;
-        if (i === 1) q = 0.25;
-        if (i === 2) q = 0.5;
-        if (i === 3) q = 0.75;
-        if (i === 4) q = 1;
-        existingItems[value] = q;
-      });
-      console.log(existingItems);
-      console.log(
-        Object.values(jStat.quantiles(d, Object.values(existingItems))).map(q =>
-          Math.round(q)
-        )
-      );
-      return Object.values(
-        jStat.quantiles(d, Object.values(existingItems))
-      ).map(q => Math.round(q));
+    if (this.observedDays.length !== 0) {
+      return determineQuantiles(this.observedDays);
     }
+    return [];
+  }
+
+  @computed
+  get observedQuantilesValues() {
+    if (this.observedQuantiles.length !== 0) {
+      return Object.values(this.observedQuantiles);
+    }
+    return [];
   }
 
   @computed
   get observedIndex() {
     if (this.observedQuantiles.length !== 0) {
-      return index(this.daysAboveThresholdThisYear, this.observedQuantiles);
+      return index(
+        this.daysAboveThresholdThisYear,
+        this.observedQuantilesValues
+      );
     }
     return [];
   }
@@ -328,41 +318,17 @@ export default class appStore {
 
   @computed
   get projectedQuantiles() {
-    console.log(this.selectedProjection);
+    console.log(this.selectedProjection, `rpc:${this.highEmission}`);
     if (this.projectedDays.length !== 0) {
-      let existingItems = {};
-      let quantiles = jStat.quantiles(this.projectedDays, [
-        0,
-        0.25,
-        0.5,
-        0.75,
-        1
-      ]);
-      console.log(`raw: ${quantiles}`);
-      if (quantiles.length !== 0) {
-        quantiles = quantiles.map(x => Math.round(x));
-        // console.log(quantiles);
-        quantiles.forEach((value, i) => {
-          let q;
-          if (i === 0) q = 0;
-          if (i === 1) q = 0.25;
-          if (i === 2) q = 0.5;
-          if (i === 3) q = 0.75;
-          if (i === 4) q = 1;
-          existingItems[value] = q;
-        });
+      return determineQuantiles(this.projectedDays);
+    }
+    return [];
+  }
 
-        console.log(existingItems);
-        console.log(
-          Object.values(
-            jStat.quantiles(this.projectedDays, Object.values(existingItems))
-          ).map(q => Math.round(q))
-        );
-
-        return Object.values(
-          jStat.quantiles(this.projectedDays, Object.values(existingItems))
-        ).map(q => Math.round(q));
-      }
+  @computed
+  get projectedQuantilesValues() {
+    if (this.projectedQuantiles.length !== 0) {
+      return Object.values(this.projectedQuantiles);
     }
     return [];
   }
@@ -370,7 +336,10 @@ export default class appStore {
   @computed
   get projectedIndex() {
     if (this.projectedQuantiles.length !== 0) {
-      return index(this.daysAboveThresholdThisYear, this.projectedQuantiles);
+      return index(
+        this.daysAboveThresholdThisYear,
+        this.projectedQuantilesValues
+      );
     }
     return [];
   }
