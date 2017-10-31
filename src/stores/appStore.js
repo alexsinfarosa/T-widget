@@ -181,8 +181,6 @@ export default class appStore {
     this.setProjection();
   };
 
-  // @observable month = Number(format(new Date(), "MM"));
-
   @action
   loadProjection2040() {
     this.setIsPLoading(true);
@@ -263,6 +261,7 @@ export default class appStore {
     this.projection = d;
   };
 
+  @observable month = Number(format(new Date(), "MM"));
   @computed
   get daysAbovePerYear() {
     const mm = 12;
@@ -316,7 +315,6 @@ export default class appStore {
       // console.log(dayOfYear, [currentMonth, daysAbove]);
       results.push([currentMonth, daysAbove]);
     }
-
     return results;
   }
 
@@ -340,7 +338,7 @@ export default class appStore {
         0.75,
         1
       ]);
-      console.log(quantiles);
+      console.log(`raw: ${quantiles}`);
       if (quantiles.length !== 0) {
         quantiles = quantiles.map(x => Math.round(x));
         // console.log(quantiles);
@@ -372,9 +370,6 @@ export default class appStore {
   @computed
   get projectedIndex() {
     if (this.projectedQuantiles.length !== 0) {
-      console.log(
-        index(this.daysAboveThresholdThisYear, this.projectedQuantiles)
-      );
       return index(this.daysAboveThresholdThisYear, this.projectedQuantiles);
     }
     return [];

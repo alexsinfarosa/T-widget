@@ -69,12 +69,12 @@ const InnerCircle = ({
           fill={fill}
           fontSize={13}
         >
-          {`A value as low as ${daysAbove} ${daysAbove === 1
-            ? "day"
-            : "days"} is not expected to occur in ${type.slice(
+          {`Every year during ${type.slice(
             11,
             type.lenght
-          )}`}
+          )} will have more than ${daysAbove} ${daysAbove === 1
+            ? "day"
+            : "days"} > ${payload.t}˚F`}
         </text>
       )}
 

@@ -20,14 +20,8 @@ import GraphLabels from "./GraphLables";
 class TimeSeries extends Component {
   render() {
     const { temperature, observedMean } = this.props.store.app;
-    const { index, arcData, graphData } = this.props;
-
-    // let mean;
-    // if (quantiles) mean = quantiles[2];
-    const { width, height } = this.props;
+    const { index, width, height, arcData, graphData } = this.props;
     const data = graphData.slice();
-
-    console.log(this.props);
 
     return (
       <ComposedChart width={width} height={height} data={data}>

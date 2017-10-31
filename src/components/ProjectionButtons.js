@@ -20,7 +20,6 @@ class ProjectionButtons extends Component {
     console.log(e.target.value);
     this.props.store.app.setHighEmission(e.target.value);
     const { selectedProjection } = this.props.store.app;
-    console.log(selectedProjection);
 
     if (selectedProjection === "Projection 2040-2069") {
       this.props.store.app.loadProjection2040();
@@ -31,7 +30,6 @@ class ProjectionButtons extends Component {
 
   render() {
     const { selectedProjection, highEmission } = this.props.store.app;
-    console.log(highEmission);
     return (
       <VBox style={{ marginBottom: "2rem" }}>
         <Radio.Group
