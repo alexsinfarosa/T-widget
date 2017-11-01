@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 
 import { Slider } from "antd";
+import { Box } from "styles";
 
 @inject("store")
 @observer
@@ -32,13 +33,15 @@ class TempSlider extends Component {
       }
     };
     return (
-      <Slider
-        style={{ width: "60%" }}
-        min={80}
-        marks={marks}
-        defaultValue={temperature}
-        onAfterChange={this.onChange}
-      />
+      <Box>
+        <Slider
+          style={{ width: "60%" }}
+          min={80}
+          marks={marks}
+          defaultValue={temperature}
+          onAfterChange={this.onChange}
+        />
+      </Box>
     );
   }
 }

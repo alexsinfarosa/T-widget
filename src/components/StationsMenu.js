@@ -3,6 +3,8 @@ import { inject, observer } from "mobx-react";
 import { stations } from "stations";
 import { Radio } from "antd";
 
+import { Box } from "styles";
+
 @inject("store")
 @observer
 class StationsMenu extends Component {
@@ -24,13 +26,15 @@ class StationsMenu extends Component {
     });
 
     return (
-      <Radio.Group
-        defaultValue={station ? station.name : null}
-        size="large"
-        onChange={this.onChange}
-      >
-        {stationList}
-      </Radio.Group>
+      <Box>
+        <Radio.Group
+          defaultValue={station ? station.name : null}
+          size="large"
+          onChange={this.onChange}
+        >
+          {stationList}
+        </Radio.Group>
+      </Box>
     );
   }
 }

@@ -12,7 +12,7 @@ import Projection from "components/Projection";
 import ProjectionButtons from "components/ProjectionButtons";
 
 // Styled components
-import { Page, VBox } from "styles";
+import { Page, VBox, Box } from "styles";
 
 @inject("store")
 @observer
@@ -22,33 +22,23 @@ class App extends Component {
     return (
       <Page>
         <StationsMenu />
-        <br />
         <TempSlider />
-        <br />
-        <Button
-          style={{ minHeight: "33px", marginBottom: "1em" }}
-          type={isGraph ? "primary" : "default"}
-          icon="bar-chart"
-          size="large"
-          onClick={() => this.props.store.app.setIsGraph(true)}
-        >
-          Time Series Graph
-        </Button>
+        <Box>
+          <Button
+            style={{ minHeight: "33px", marginBottom: "1em" }}
+            type={isGraph ? "primary" : "default"}
+            icon="bar-chart"
+            size="large"
+            onClick={() => this.props.store.app.setIsGraph(true)}
+          >
+            Time Series Graph
+          </Button>
+        </Box>
 
-        <br />
+        {!isLoading ? <ObservedGauge /> : <Spin />}
 
-        <VBox>
-          {!isLoading ? <ObservedGauge /> : <Spin />}
-          <br />
-          {!isLoading && !isPLoading ? (
-            <div>
-              <Projection />
-              <ProjectionButtons />
-            </div>
-          ) : (
-            <Spin />
-          )}
-        </VBox>
+        {!isLoading && !isPLoading ? <Projection /> : <Spin />}
+        {!isLoading && !isPLoading ? <ProjectionButtons /> : <Spin />}
       </Page>
     );
   }

@@ -34,7 +34,7 @@ export default class ObservedGauge extends Component {
     });
 
     return (
-      <Box bordered>
+      <Box bordered svg>
         <PieChart width={width} height={height}>
           <Pie
             activeIndex={observedIndex}

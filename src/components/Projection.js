@@ -35,7 +35,7 @@ export default class Prohection extends Component {
     });
 
     return (
-      <Box bordered>
+      <Box bordered svg>
         <PieChart width={width} height={height}>
           <Pie
             activeIndex={projectedIndex}

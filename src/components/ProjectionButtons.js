@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import { Radio } from "antd";
 
-import { VBox } from "styles";
+import { Box } from "styles";
 
 @inject("store")
 @observer
@@ -30,7 +30,7 @@ class ProjectionButtons extends Component {
   render() {
     const { selectedProjection, highEmission } = this.props.store.app;
     return (
-      <VBox style={{ marginBottom: "2rem" }}>
+      <Box column style={{ marginBottom: "2em" }}>
         <Radio.Group
           style={{ margin: "20px auto" }}
           defaultValue={selectedProjection}
@@ -63,7 +63,7 @@ class ProjectionButtons extends Component {
             <Radio value={85}>High Emission rpc 8.5</Radio>
           </Radio.Group>
         </div>
-      </VBox>
+      </Box>
     );
   }
 }

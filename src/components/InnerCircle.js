@@ -63,7 +63,7 @@ const InnerCircle = ({
       {payload.name === "Not Expected" && (
         <text
           x={cx}
-          y={cy - cy / 1.1}
+          y={cy - cy / 1.05}
           dy={8}
           textAnchor="middle"
           fill={fill}
