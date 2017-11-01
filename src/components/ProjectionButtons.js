@@ -17,7 +17,6 @@ class ProjectionButtons extends Component {
   };
 
   changeEmission = e => {
-    console.log(e.target.value);
     this.props.store.app.setHighEmission(e.target.value);
     const { selectedProjection } = this.props.store.app;
 

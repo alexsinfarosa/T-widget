@@ -5,7 +5,36 @@ export const determineQuantiles = d => {
   let original = jStat
     .quantiles(d, [0, 0.25, 0.5, 0.75, 1])
     .map(x => Math.round(x));
+  // let original = [4, 4, 4, 4, 4]; // does not work. FIX IT
   console.log(`original: ${original}`);
+
+  if (
+    original[0] === original[1] &&
+    original[1] === original[2] &&
+    original[2] === original[3] &&
+    original[3] === original[4]
+  ) {
+    console.log({ "100": original[4] });
+    return { "100": original[4] };
+  }
+
+  if (
+    original[0] === original[1] &&
+    original[2] === original[3] &&
+    original[3] === original[4]
+  ) {
+    console.log({ "0": original[0], "50": original[2] });
+    return { "0": original[0], "50": original[2] };
+  }
+
+  if (
+    original[1] === original[2] &&
+    original[2] === original[3] &&
+    original[3] === original[4]
+  ) {
+    console.log({ "0": original[0], "50": original[2] });
+    return { "0": original[0], "50": original[2] };
+  }
 
   let q = {};
   original.forEach((value, i) => {
@@ -17,117 +46,14 @@ export const determineQuantiles = d => {
     if (i === 4) k = 100;
     q[value] = k;
   });
-
-  console.log(q);
-
-  // check if 25%, mean and 75% are equal
-  if (q[1] === q[2] && q[2] === q[3]) {
-    q = jStat.quantiles(d, [0, 0.5, 1]).map(x => Math.round(x));
-    console.log({ "0": q[0], "50": q[1], "100": q[2] });
-    return { "0": q[0], "50": q[1], "100": q[2] };
-  }
-
-  // check if 25%, mean and 75% are equal
-  if (q[0] === q[1] && q[1] === q[2] && q[2] === q[3]) {
-    q = jStat.quantiles(d, [0, 0.5, 1]).map(x => Math.round(x));
-    console.log({ "0": q[0], "50": q[1], "100": q[2] });
-    return { "0": q[0], "50": q[1], "100": q[2] };
-  }
-
-  // check 25% if equal to mean
-  if (q[1] === q[2]) {
-    console.log("ONE");
-    q = jStat.quantiles(d, [0, 0.5, 0.75, 1]).map(x => Math.round(x));
-    if (q[0] === q[1]) {
-      q = jStat.quantiles(d, [0.5, 0.75, 1]).map(x => Math.round(x));
-      if (q[0] === q[1]) {
-        q = jStat.quantiles(d, [0.5, 1]).map(x => Math.round(x));
-        if (q[0] === q[1]) {
-          q = jStat.quantiles(d, [1]).map(x => Math.round(x));
-          console.log({ "100": q[0] });
-          return { "100": q[0] };
-        }
-        console.log({ "50": q[0], "100": q[1] });
-        return { "50": q[0], "100": q[1] };
-      }
-      console.log({ "50": q[0], "75": q[1], "100": q[2] });
-      return { "50": q[0], "75": q[1], "100": q[2] };
-    }
-    console.log({ "0": q[0], "50": q[1], "75": q[2], "100": q[3] });
-    return { "0": q[0], "50": q[1], "75": q[2], "100": q[3] };
-  }
-
-  // check 75% if equal to mean
-  if (q[2] === q[3]) {
-    console.log("TWO");
-    q = jStat.quantiles(d, [0, 0.25, 0.5, 1]).map(x => Math.round(x));
-    if (q[0] === q[1]) {
-      q = jStat.quantiles(d, [0.25, 0.5, 1]).map(x => Math.round(x));
-      if (q[0] === q[1]) {
-        q = jStat.quantiles(d, [0.5, 1]).map(x => Math.round(x));
-        if (q[0] === q[1]) {
-          q = jStat.quantiles(d, [1]).map(x => Math.round(x));
-          console.log({ "100": q[0] });
-          return { "100": q[0] };
-        }
-        console.log({ "50": q[0], "100": q[1] });
-        return { "50": q[0], "100": q[1] };
-      }
-      console.log({ "25": q[0], "50": q[1], "100": q[2] });
-      return { "25": q[0], "50": q[1], "100": q[2] };
-    }
-    console.log({ "0": q[0], "25": q[1], "50": q[2], "100": q[3] });
-    return { "0": q[0], "25": q[1], "50": q[2], "100": q[3] };
-  }
-
-  // check if min=25%
-  if (q[0] === q[1]) {
-    console.log("THREE");
-    q = jStat.quantiles(d, [0.25, 0.5, 0.75, 1]).map(x => Math.round(x));
-    if (q[0] === q[1]) {
-      q = jStat.quantiles(d, [0.5, 0.75, 1]).map(x => Math.round(x));
-      if (q[0] === q[1]) {
-        q = jStat.quantiles(d, [0.5, 1]).map(x => Math.round(x));
-        if (q[0] === q[1]) {
-          q = jStat.quantiles(d, [1]).map(x => Math.round(x));
-          console.log({ "100": q[0] });
-          return { "100": q[0] };
-        }
-        console.log({ "50": q[0], "100": q[1] });
-        return { "50": q[0], "100": q[1] };
-      }
-      console.log({ "50": q[0], "75": q[1], "100": q[2] });
-      return { "50": q[0], "75": q[1], "100": q[2] };
-    }
-    console.log({ "25": q[0], "50": q[1], "75": q[2], "100": q[3] });
-    return { "25": q[0], "50": q[1], "75": q[2], "100": q[3] };
-  }
-
-  // check if 75%=max
-  if (q[3] === q[4]) {
-    console.log("FOUR");
-    q = jStat.quantiles(d, [0, 0.25, 0.5, 1]).map(x => Math.round(x));
-    if (q[0] === q[1]) {
-      q = jStat.quantiles(d, [0.25, 0.5, 1]).map(x => Math.round(x));
-      if (q[0] === q[1]) {
-        q = jStat.quantiles(d, [0.5, 1]).map(x => Math.round(x));
-        if (q[0] === q[1]) {
-          q = jStat.quantiles(d, [1]).map(x => Math.round(x));
-          console.log({ "100": q[0] });
-          return { "100": q[0] };
-        }
-        console.log({ "50": q[0], "100": q[1] });
-        return { "50": q[0], "100": q[1] };
-      }
-      console.log({ "25": q[0], "50": q[1], "100": q[2] });
-      return { "25": q[0], "50": q[1], "100": q[2] };
-    }
-    console.log({ "0": q[0], "25": q[1], "50": q[2], "100": q[3] });
-    return { "0": q[0], "25": q[1], "50": q[2], "100": q[3] };
-  }
-
-  console.log({ "0": q[0], "25": q[1], "50": q[2], "75": q[3], "100": q[4] });
-  return { "0": q[0], "25": q[1], "50": q[2], "75": q[3], "100": q[4] };
+  const values = Object.keys(q);
+  const keys = Object.values(q);
+  let results = {};
+  keys.forEach((key, i) => {
+    results[key] = Number(values[i]);
+  });
+  console.log(results);
+  return results;
 };
 
 export const index = (daysAbovethreshold, quantiles) => {
@@ -248,6 +174,7 @@ export const projectionHeaderMessage = name => {
 export const arcData = (q, days, temp, darkArcLabel) => {
   const keys = Object.keys(q);
   const values = Object.values(q);
+  // console.log(keys, values);
   if (values.length === 5) {
     return [
       {
@@ -539,6 +466,74 @@ export const arcData = (q, days, temp, darkArcLabel) => {
       ];
     }
   }
+  if (isEqual(keys, ["0", "25", "75", "100"])) {
+    return [
+      {
+        name: "Min",
+        startArcQuantile: values[0],
+        endArcQuantile: values[0],
+        daysAbove: days,
+        t: temp,
+        value: 0
+      },
+      {
+        name: "Below",
+        startArcQuantile: values[0],
+        endArcQuantile: values[1],
+        daysAbove: days,
+        t: temp,
+        value: 1
+      },
+      {
+        name: "25%",
+        startArcQuantile: values[1],
+        endArcQuantile: values[1],
+        daysAbove: days,
+        t: temp,
+        value: 0
+      },
+      {
+        name: "Slightly Below",
+        startArcQuantile: values[1],
+        endArcQuantile: values[2],
+        daysAbove: days,
+        t: temp,
+        value: 1
+      },
+      {
+        name: "Mean",
+        startArcQuantile: values[2],
+        endArcQuantile: values[2],
+        daysAbove: days,
+        t: temp,
+        value: 0
+      },
+      {
+        name: "Above",
+        startArcQuantile: values[2],
+        endArcQuantile: values[3],
+        daysAbove: days,
+        t: temp,
+        value: 1
+      },
+      {
+        name: "Max",
+        startArcQuantile: values[3],
+        endArcQuantile: values[3],
+        daysAbove: days,
+        t: temp,
+        value: 0
+      },
+      {
+        name: darkArcLabel,
+        startArcQuantile: values[3],
+        endArcQuantile: values[0],
+        daysAbove: days,
+        t: temp,
+        value: 1
+      }
+    ];
+  }
   if (values.length === 3) {
     if (isEqual(keys, ["50", "75", "100"])) {
       return [
@@ -645,7 +640,11 @@ export const arcData = (q, days, temp, darkArcLabel) => {
         }
       ];
     }
-    if (isEqual(keys, ["0", "50", "100"])) {
+    if (
+      isEqual(keys, ["0", "50", "100"]) ||
+      isEqual(keys, ["0", "75", "100"]) ||
+      isEqual(keys, ["25", "75", "100"])
+    ) {
       return [
         {
           name: "Min",
@@ -698,11 +697,10 @@ export const arcData = (q, days, temp, darkArcLabel) => {
       ];
     }
   }
-  // there is no length === 1
-  if (values.length === 2) {
+  if (isEqual(keys, ["0", "25", "100"])) {
     return [
       {
-        name: "Mean",
+        name: "Min",
         startArcQuantile: values[0],
         endArcQuantile: values[0],
         daysAbove: days,
@@ -710,7 +708,7 @@ export const arcData = (q, days, temp, darkArcLabel) => {
         value: 0
       },
       {
-        name: "Above",
+        name: "Below",
         startArcQuantile: values[0],
         endArcQuantile: values[1],
         daysAbove: days,
@@ -718,7 +716,7 @@ export const arcData = (q, days, temp, darkArcLabel) => {
         value: 1
       },
       {
-        name: "Max",
+        name: "25%",
         startArcQuantile: values[1],
         endArcQuantile: values[1],
         daysAbove: days,
@@ -726,8 +724,24 @@ export const arcData = (q, days, temp, darkArcLabel) => {
         value: 0
       },
       {
-        name: darkArcLabel,
+        name: "Slightly Below",
         startArcQuantile: values[1],
+        endArcQuantile: values[2],
+        daysAbove: days,
+        t: temp,
+        value: 1
+      },
+      {
+        name: "Mean",
+        startArcQuantile: values[2],
+        endArcQuantile: values[2],
+        daysAbove: days,
+        t: temp,
+        value: 0
+      },
+      {
+        name: darkArcLabel,
+        startArcQuantile: values[2],
         endArcQuantile: values[0],
         daysAbove: days,
         t: temp,
@@ -735,13 +749,125 @@ export const arcData = (q, days, temp, darkArcLabel) => {
       }
     ];
   }
+  // there is no length === 1
+  if (values.length === 2) {
+    if (isEqual(keys, ["50", "100"])) {
+      return [
+        {
+          name: "Mean",
+          startArcQuantile: values[0],
+          endArcQuantile: values[0],
+          daysAbove: days,
+          t: temp,
+          value: 0
+        },
+        {
+          name: "Above",
+          startArcQuantile: values[0],
+          endArcQuantile: values[1],
+          daysAbove: days,
+          t: temp,
+          value: 1
+        },
+        {
+          name: "Max",
+          startArcQuantile: values[1],
+          endArcQuantile: values[1],
+          daysAbove: days,
+          t: temp,
+          value: 0
+        },
+        {
+          name: darkArcLabel,
+          startArcQuantile: values[1],
+          endArcQuantile: values[0],
+          daysAbove: days,
+          t: temp,
+          value: 1
+        }
+      ];
+    }
 
+    if (isEqual(keys, ["0", "50"])) {
+      return [
+        {
+          name: "Min",
+          startArcQuantile: values[0],
+          endArcQuantile: values[0],
+          daysAbove: days,
+          t: temp,
+          value: 0
+        },
+        {
+          name: "Below",
+          startArcQuantile: values[0],
+          endArcQuantile: values[1],
+          daysAbove: days,
+          t: temp,
+          value: 1
+        },
+        {
+          name: "Mean",
+          startArcQuantile: values[1],
+          endArcQuantile: values[1],
+          daysAbove: days,
+          t: temp,
+          value: 0
+        },
+        {
+          name: darkArcLabel,
+          startArcQuantile: values[1],
+          endArcQuantile: values[0],
+          daysAbove: days,
+          t: temp,
+          value: 1
+        }
+      ];
+    }
+
+    if (isEqual(keys, ["75", "100"])) {
+      return [
+        {
+          name: "Mean",
+          startArcQuantile: values[0],
+          endArcQuantile: values[0],
+          daysAbove: days,
+          t: temp,
+          value: 0
+        },
+        {
+          name: "Above",
+          startArcQuantile: values[0],
+          endArcQuantile: values[1],
+          daysAbove: days,
+          t: temp,
+          value: 1
+        },
+        {
+          name: "Max",
+          startArcQuantile: values[1],
+          endArcQuantile: values[1],
+          daysAbove: days,
+          t: temp,
+          value: 0
+        },
+        {
+          name: darkArcLabel,
+          startArcQuantile: values[1],
+          endArcQuantile: values[0],
+          daysAbove: days,
+          t: temp,
+          value: 1
+        }
+      ];
+    }
+  }
   if (values.length === 1) {
     return [
       {
         name: "Always Observed",
-        // startArcQuantile: values[0],
-        // endArcQuantile: values[0],
+        startArcQuantile: values[0],
+        endArcQuantile: values[0],
         daysAbove: days,
         t: temp,
         value: 1
